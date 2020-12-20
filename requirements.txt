@@ -11,7 +11,6 @@ numpy==1.15.0
 pandas==0.23.4
 Pillow==5.2.0
 pycparser==2.18
-pygit==0.1
 pyparsing==2.2.0
 python-dateutil==2.7.3
 pytz==2018.5
