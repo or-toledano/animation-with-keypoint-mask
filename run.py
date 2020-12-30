@@ -1,9 +1,9 @@
 import matplotlib
-
-matplotlib.use('Agg')
-
-import os, sys
+import os
+import sys
 import yaml
+import torch
+
 from argparse import ArgumentParser
 from time import gmtime, strftime
 from shutil import copy
@@ -14,14 +14,14 @@ from modules.generator import OcclusionAwareGenerator
 from modules.discriminator import MultiScaleDiscriminator
 from modules.keypoint_detector import KPDetector
 
-import torch
-
 from train import train
 from reconstruction import reconstruction
 from animate import animate
 
+matplotlib.use('Agg')
+
 if __name__ == "__main__":
-    
+
     if sys.version_info[0] < 3:
         raise Exception("You must use Python 3 or higher. Recommended version is Python 3.7")
 
