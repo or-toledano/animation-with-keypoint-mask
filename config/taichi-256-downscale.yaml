@@ -49,7 +49,7 @@ model_params:
      num_blocks: 5
      # Keypioint is predicted on smaller images for better performance,
      # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-     scale_factor: 0.0625
+     scale_factor: 0.125
   generator_params:
     # Number of features mutliplier
     block_expansion: 64
@@ -72,7 +72,7 @@ model_params:
       num_blocks: 5
       # Dense motion is predicted on smaller images for better performance,
       # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-      scale_factor: 0.0625
+      scale_factor: 0.125
   discriminator_params:
     # Discriminator can be multiscale, if you want 2 discriminator on original
     # resolution and half of the original, specify scales: [1, 0.5]
