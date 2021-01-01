@@ -17,7 +17,7 @@ dataset_params:
   # If the name of the video '12335#adsbf.mp4' the id is assumed to be 12335
   id_sampling: True
   # List with pairs for animation, None for random pairs
-  pairs_list: data/taichi256-partial.csv
+  pairs_list: data/taichi256.csv
   # Augmentation parameters see augmentation.py for all posible augmentations
   augmentation_params:
     flip_param:
@@ -49,7 +49,7 @@ model_params:
      num_blocks: 5
      # Keypioint is predicted on smaller images for better performance,
      # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-     scale_factor: 0.125
+     scale_factor: 0.25
   generator_params:
     # Number of features mutliplier
     block_expansion: 64
@@ -72,7 +72,7 @@ model_params:
       num_blocks: 5
       # Dense motion is predicted on smaller images for better performance,
       # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-      scale_factor: 0.125
+      scale_factor: 0.25
   discriminator_params:
     # Discriminator can be multiscale, if you want 2 discriminator on original
     # resolution and half of the original, specify scales: [1, 0.5]
