@@ -17,7 +17,7 @@ dataset_params:
   # If the name of the video '12335#adsbf.mp4' the id is assumed to be 12335
   id_sampling: True
   # List with pairs for animation, None for random pairs
-  pairs_list: data/taichi256.csv
+  pairs_list: data/taichi256-partial.csv
   # Augmentation parameters see augmentation.py for all posible augmentations
   augmentation_params:
     flip_param:
