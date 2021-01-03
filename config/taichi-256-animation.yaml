@@ -9,7 +9,7 @@
 # video id.
 dataset_params:
   # Path to data, data can be stored in several formats: .mp4 or .gif videos, stacked .png images or folders with frames.
-  root_dir: /home/dcor/datasets/taichi
+  root_dir: /home/orto/Videos
   # Image shape, needed for staked .png format.
   frame_shape: [256, 256, 3]
   # In case of TaiChi single video can be splitted in many chunks, or the maybe several videos for single person.
@@ -17,7 +17,7 @@ dataset_params:
   # If the name of the video '12335#adsbf.mp4' the id is assumed to be 12335
   id_sampling: True
   # List with pairs for animation, None for random pairs
-  pairs_list: data/taichi256-partial.csv
+  # pairs_list: None
   # Augmentation parameters see augmentation.py for all posible augmentations
   augmentation_params:
     flip_param:
@@ -97,7 +97,7 @@ train_params:
   lr_generator: 2.0e-4
   lr_discriminator: 2.0e-4
   lr_kp_detector: 2.0e-4
-  batch_size: 30
+  batch_size: 1
   # Scales for perceptual pyramide loss. If scales = [1, 0.5, 0.25, 0.125] and image resolution is 256x256,
   # than the loss will be computer on resolutions 256x256, 128x128, 64x64, 32x32.
   scales: [1, 0.5, 0.25, 0.125]

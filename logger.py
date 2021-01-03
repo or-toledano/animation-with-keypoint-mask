@@ -38,35 +38,40 @@ class Logger:
 
     def visualize_rec(self, inp, out):
         image = self.visualizer.visualize(inp['driving'], inp['source'], out)
-        imageio.imsave(os.path.join(self.visualizations_dir, "%s-rec.png" % str(self.epoch).zfill(self.zfill_num)), image)
+        imageio.imsave(os.path.join(self.visualizations_dir, "%s-rec.png" % str(self.epoch).zfill(self.zfill_num)),
+                       image)
 
     def save_cpk(self, emergent=False):
         cpk = {k: v.state_dict() for k, v in self.models.items()}
         cpk['epoch'] = self.epoch
-        cpk_path = os.path.join(self.cpk_dir, '%s-checkpoint.pth.tar' % str(self.epoch).zfill(self.zfill_num)) 
+        cpk_path = os.path.join(self.cpk_dir, '%s-checkpoint.pth.tar' % str(self.epoch).zfill(self.zfill_num))
         if not (os.path.exists(cpk_path) and emergent):
             torch.save(cpk, cpk_path)
 
     @staticmethod
     def load_cpk(checkpoint_path, generator=None, discriminator=None, kp_detector=None,
                  optimizer_generator=None, optimizer_discriminator=None, optimizer_kp_detector=None):
-        checkpoint = torch.load(checkpoint_path)
+        if torch.cuda.is_available():
+            map_location = None
+        else:
+            map_location = 'cpu'
+        checkpoint = torch.load(checkpoint_path, map_location=map_location)
         if generator is not None:
             generator.load_state_dict(checkpoint['generator'])
         if kp_detector is not None:
             kp_detector.load_state_dict(checkpoint['kp_detector'])
         if discriminator is not None:
             try:
-               discriminator.load_state_dict(checkpoint['discriminator'])
+                discriminator.load_state_dict(checkpoint['discriminator'])
             except:
-               print ('No discriminator in the state-dict. Dicriminator will be randomly initialized')
+                print('No discriminator in the state-dict. Dicriminator will be randomly initialized')
         if optimizer_generator is not None:
             optimizer_generator.load_state_dict(checkpoint['optimizer_generator'])
         if optimizer_discriminator is not None:
             try:
                 optimizer_discriminator.load_state_dict(checkpoint['optimizer_discriminator'])
             except RuntimeError as e:
-                print ('No discriminator optimizer in the state-dict. Optimizer will be not initialized')
+                print('No discriminator optimizer in the state-dict. Optimizer will be not initialized')
         if optimizer_kp_detector is not None:
             optimizer_kp_detector.load_state_dict(checkpoint['optimizer_kp_detector'])
 
@@ -101,7 +106,7 @@ class Visualizer:
         self.draw_border = draw_border
         self.colormap = plt.get_cmap(colormap)
 
-    def draw_image_with_kp(self, image, kp_array):
+    def draw_image_with_kp(self, image, kp_array):  # TODO kp_array
         image = np.copy(image)
         spatial_size = np.array(image.shape[:2][::-1])[np.newaxis]
         kp_array = spatial_size * (kp_array + 1) / 2
@@ -167,7 +172,6 @@ class Visualizer:
             images.append((prediction, kp_norm))
         images.append(prediction)
 
-
         ## Occlusion map
         if 'occlusion_map' in out:
             occlusion_map = out['occlusion_map'].data.cpu().repeat(1, 3, 1, 1)
@@ -181,7 +185,7 @@ class Visualizer:
             for i in range(out['sparse_deformed'].shape[1]):
                 image = out['sparse_deformed'][:, i].data.cpu()
                 image = F.interpolate(image, size=source.shape[1:3])
-                mask = out['mask'][:, i:(i+1)].data.cpu().repeat(1, 3, 1, 1)
+                mask = out['mask'][:, i:(i + 1)].data.cpu().repeat(1, 3, 1, 1)
                 mask = F.interpolate(mask, size=source.shape[1:3])
                 image = np.transpose(image.numpy(), (0, 2, 3, 1))
                 mask = np.transpose(mask.numpy(), (0, 2, 3, 1))
