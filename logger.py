@@ -106,7 +106,7 @@ class Visualizer:
         self.draw_border = draw_border
         self.colormap = plt.get_cmap(colormap)
 
-    def draw_image_with_kp(self, image, kp_array):  # TODO kp_array
+    def draw_image_with_kp(self, image, kp_array: np.ndarray):  # TODO kp_array
         image = np.copy(image)
         spatial_size = np.array(image.shape[:2][::-1])[np.newaxis]
         kp_array = spatial_size * (kp_array + 1) / 2

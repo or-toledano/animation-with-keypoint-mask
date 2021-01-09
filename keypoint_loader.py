@@ -8,15 +8,17 @@ from argparse import ArgumentParser
 from time import gmtime, strftime
 from skimage.transform import resize
 from logger import Visualizer
+import matplotlib.pyplot as plot
 from matplotlib.pyplot import imshow
+from time import sleep
 from modules.util import Hourglass, AntiAliasInterpolation2d, make_coordinate_grid, kp2gaussian
 
 import matplotlib.pyplot as plt
 
 
 def run_kp(config, checkpoint, image: np.ndarray):
-    image = resize(image, (256, 256))[..., :3]
-    image = torch.tensor(image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2)
+    image_np = resize(image, (256, 256))[..., :3]
+    image = torch.Tensor(image_np[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2)
     kp_params = config['model_params']['kp_detector_params']
     common_params = config['model_params']['common_params']  # TODO estimate_jacobian false
     kp_detector = KPDetector(**kp_params, **common_params)
@@ -31,11 +33,11 @@ def run_kp(config, checkpoint, image: np.ndarray):
     # identity_grid = make_coordinate_grid((h, w), type=kp_source['value'].type())
 
     v = Visualizer(**config['visualizer_params'])
-    img_t: torch.Tensor = kp_source['value']
-    img_n: np.ndarray = img_t.detach().numpy()
-    with_kp: np.ndarray = v.draw_image_with_kp(image, img_n)
+    kp_t: torch.Tensor = kp_source['value']
+    kp_n: np.ndarray = np.squeeze(kp_t.detach().numpy())
+    with_kp: np.ndarray = v.draw_image_with_kp(image_np, kp_n)
     imshow(with_kp)
-    pass
+    plot.show()
     return
 
 
