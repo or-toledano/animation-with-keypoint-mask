@@ -200,6 +200,7 @@ class AntiAliasInterpolation2d(nn.Module):
     """
     Band-limited downsampling, for better preservation of the input signal.
     """
+
     def __init__(self, channels, scale):
         super(AntiAliasInterpolation2d, self).__init__()
         sigma = (1 / scale - 1) / 2
@@ -216,7 +217,7 @@ class AntiAliasInterpolation2d(nn.Module):
             [
                 torch.arange(size, dtype=torch.float32)
                 for size in kernel_size
-                ]
+            ]
         )
         for size, std, mgrid in zip(kernel_size, sigma, meshgrids):
             mean = (size - 1) / 2
@@ -231,6 +232,8 @@ class AntiAliasInterpolation2d(nn.Module):
         self.register_buffer('weight', kernel)
         self.groups = channels
         self.scale = scale
+        inv_scale = 1 / scale
+        self.int_inv_scale = int(inv_scale)
 
     def forward(self, input):
         if self.scale == 1.0:
@@ -238,6 +241,6 @@ class AntiAliasInterpolation2d(nn.Module):
 
         out = F.pad(input, (self.ka, self.kb, self.ka, self.kb))
         out = F.conv2d(out, weight=self.weight, groups=self.groups)
-        out = F.interpolate(out, scale_factor=(self.scale, self.scale))
+        out = out[:, :, ::self.int_inv_scale, ::self.int_inv_scale]
 
         return out
