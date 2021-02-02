@@ -3,3 +3,6 @@ Currently, a fork of First Order Motion Model
 
 conda install --file requirements.txt
 conda env update --name <name of your env> --file environment.yml
+If the above doesn't work (two names for the same env ):):
+conda env update --prefix <path of your env> --file environment.yml
+
