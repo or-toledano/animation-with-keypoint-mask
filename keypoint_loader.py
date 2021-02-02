@@ -35,10 +35,27 @@ def run_kp(config, checkpoint, image: np.ndarray):
     v = Visualizer(**config['visualizer_params'])
     kp_t: torch.Tensor = kp_source['value']
     kp_n: np.ndarray = np.squeeze(kp_t.detach().numpy())
-    with_kp: np.ndarray = v.draw_image_with_kp(image_np, kp_n)
+    with_kp: np.ndarray = v.draw_image_with_kp(image_np, kp_n) # TODO debug draw_image_with_kp to extract kp_array from there which should be the tensor with the real coordinates (not between -1,1)
     imshow(with_kp)
     plot.show()
     return
+
+
+def run_kp(config: dict, checkpoint, source: torch.Tensor, driving: torch.Tensor) -> torch.Tensor:
+    """
+    :param config: see prev function
+    :param checkpoint: see prev function
+    :param source: downscaled e.g. bsx3x64x64 (but implement for general case) source
+    :param driving: downscaled e.g. bsx3x64x64 (but implement for general case) driving
+    :return: [source|drawn_source_kp|drawn_driving_kp]_{BS}
+    drawn kp should be white circle with size from config on black background
+    """
+    # torch cat (???)
+    # image = np.copy(image) TODO torch??
+    # spatial_size = np.array(image.shape[:2][::-1])[np.newaxis]
+    # kp_array = spatial_size * (kp_array + 1) / 2
+    ...
+
 
 
 def main():
