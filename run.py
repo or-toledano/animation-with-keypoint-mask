@@ -11,7 +11,6 @@ from shutil import copy
 from frames_dataset import FramesDataset
 
 from modules.generator import OcclusionAwareGenerator
-from modules.discriminator import MultiScaleDiscriminator
 from modules.keypoint_detector import KPDetector
 
 from train import train
@@ -52,13 +51,6 @@ if __name__ == "__main__":
         generator.to(opt.device_ids[0])
     if opt.verbose:
         print(generator)
-
-    discriminator = MultiScaleDiscriminator(**config['model_params']['discriminator_params'],
-                                            **config['model_params']['common_params'])
-    if torch.cuda.is_available():
-        discriminator.to(opt.device_ids[0])
-    if opt.verbose:
-        print(discriminator)
 
     kp_detector = KPDetector(**config['model_params']['kp_detector_params'],
                              **config['model_params']['common_params'])
