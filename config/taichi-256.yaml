@@ -60,19 +60,7 @@ model_params:
     num_down_blocks: 2
     # Number of ResBlocks  in Jonson architecture.
     num_bottleneck_blocks: 6
-    # Use occlusion map or not
-    estimate_occlusion_map: True
 
-    dense_motion_params:
-      # Number of features mutliplier
-      block_expansion: 64
-      # Maximum allowed number of features
-      max_features: 1024
-      # Number of block in Unet. Can be increased or decreased depending or resolution.
-      num_blocks: 5
-      # Dense motion is predicted on smaller images for better performance,
-      # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-      scale_factor: 0.25
   discriminator_params:
     # Discriminator can be multiscale, if you want 2 discriminator on original
     # resolution and half of the original, specify scales: [1, 0.5]
