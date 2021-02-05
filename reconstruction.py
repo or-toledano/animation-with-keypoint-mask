@@ -31,7 +31,7 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
 
     generator.eval()
     kp_detector.eval()
-    recon_gen_dir = './log/recon_gen'  # TODO
+    recon_gen_dir = os.path.join(log_dir, 'recon_gen')
     os.makedirs(recon_gen_dir, exist_ok=False)  #
 
     for it, x in tqdm(enumerate(dataloader)):
@@ -45,7 +45,7 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
                 x['video'] = x['video'].cuda()
             kp_source = kp_detector(x['video'][:, :, 0])
 
-            video_gen_dir = recon_gen_dir + '/' + x['name'][0]  # TODO
+            video_gen_dir = os.path.join(recon_gen_dir, x['name'][0])
             os.makedirs(video_gen_dir, exist_ok=False)  #
 
             for frame_idx in range(x['video'].shape[2]):
