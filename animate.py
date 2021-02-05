@@ -1,15 +1,12 @@
 import os
 from tqdm import tqdm
-
 import torch
 from torch.utils.data import DataLoader
-
 from frames_dataset import PairedDataset
 from logger import Logger, Visualizer
 import imageio
 from scipy.spatial import ConvexHull
 import numpy as np
-
 from sync_batchnorm import DataParallelWithCallback
 
 
@@ -84,9 +81,8 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset):
                 out['kp_source'] = kp_source
                 out['kp_norm'] = kp_norm
 
-                del out['sparse_deformed']
-
-                predictions.append(np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                predictions.append(np.transpose(out['first_phase_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                predictions.append(np.transpose(out['second_phase_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
 
                 visualization = Visualizer(**config['visualizer_params']).visualize(source=source_frame,
                                                                                     driving=driving_frame, out=out)

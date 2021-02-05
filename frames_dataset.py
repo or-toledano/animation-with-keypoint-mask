@@ -119,11 +119,9 @@ class FramesDataset(Dataset):
                 num_frames)
             video_array = video_array[frame_idx]
 
-        if self.transform is not None:
-            video_array = self.transform(video_array)
-
         out = {}
         if self.is_train:
+            video_array = self.transform(video_array)
             source = np.array(video_array[0], dtype='float32')
             driving = np.array(video_array[1], dtype='float32')
 

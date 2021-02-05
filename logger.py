@@ -49,8 +49,8 @@ class Logger:
             torch.save(cpk, cpk_path)
 
     @staticmethod
-    def load_cpk(checkpoint_path, generator=None, discriminator=None, kp_detector=None,
-                 optimizer_generator=None, optimizer_discriminator=None, optimizer_kp_detector=None):
+    def load_cpk(checkpoint_path, generator=None, kp_detector=None,
+                 optimizer_generator=None):
         if torch.cuda.is_available():
             map_location = None
         else:
@@ -60,21 +60,6 @@ class Logger:
             generator.load_state_dict(checkpoint['generator'])
         if kp_detector is not None:
             kp_detector.load_state_dict(checkpoint['kp_detector'])
-        if discriminator is not None:
-            try:
-                discriminator.load_state_dict(checkpoint['discriminator'])
-            except:
-                print('No discriminator in the state-dict. Dicriminator will be randomly initialized')
-        if optimizer_generator is not None:
-            optimizer_generator.load_state_dict(checkpoint['optimizer_generator'])
-        if optimizer_discriminator is not None:
-            try:
-                optimizer_discriminator.load_state_dict(checkpoint['optimizer_discriminator'])
-            except RuntimeError as e:
-                print('No discriminator optimizer in the state-dict. Optimizer will be not initialized')
-        if optimizer_kp_detector is not None:
-            optimizer_kp_detector.load_state_dict(checkpoint['optimizer_kp_detector'])
-
         return checkpoint['epoch']
 
     def __enter__(self):
@@ -123,7 +108,7 @@ class Visualizer:
     def create_image_column(self, images):
         if self.draw_border:
             images = np.copy(images)
-            images[:, :, [0, -1]] = (1, 1, 1)
+            images[:, :, [0, -1]] = (1, 1, 1)  # TODO why is this duplicated?
             images[:, :, [0, -1]] = (1, 1, 1)
         return np.concatenate(list(images), axis=0)
 
@@ -145,67 +130,24 @@ class Visualizer:
         source = np.transpose(source, [0, 2, 3, 1])
         images.append((source, kp_source))
 
-        # Equivariance visualization
-        if 'transformed_frame' in out:
-            transformed = out['transformed_frame'].data.cpu().numpy()
-            transformed = np.transpose(transformed, [0, 2, 3, 1])
-            transformed_kp = out['transformed_kp']['value'].data.cpu().numpy()
-            images.append((transformed, transformed_kp))
-
         # Driving image with keypoints
         kp_driving = out['kp_driving']['value'].data.cpu().numpy()
         driving = driving.data.cpu().numpy()
         driving = np.transpose(driving, [0, 2, 3, 1])
         images.append((driving, kp_driving))
 
-        # Deformed image
-        if 'deformed' in out:
-            deformed = out['deformed'].data.cpu().numpy()
-            deformed = np.transpose(deformed, [0, 2, 3, 1])
-            images.append(deformed)
-
         # Result with and without keypoints
-        prediction = out['prediction'].data.cpu().numpy()
-        prediction = np.transpose(prediction, [0, 2, 3, 1])
+        prediction1 = out['first_phase_prediction'].data.cpu().numpy()
+        prediction2 = out['second_phase_prediction'].data.cpu().numpy()
+        prediction1 = np.transpose(prediction1, [0, 2, 3, 1])
+        prediction2 = np.transpose(prediction2, [0, 2, 3, 1])
+        images.append(prediction1)
+        images.append(prediction2)
         if 'kp_norm' in out:
             kp_norm = out['kp_norm']['value'].data.cpu().numpy()
-            images.append((prediction, kp_norm))
-        images.append(prediction)
-
-        ## Occlusion map
-        if 'occlusion_map' in out:
-            occlusion_map = out['occlusion_map'].data.cpu().repeat(1, 3, 1, 1)
-            occlusion_map = F.interpolate(occlusion_map, size=source.shape[1:3]).numpy()
-            occlusion_map = np.transpose(occlusion_map, [0, 2, 3, 1])
-            images.append(occlusion_map)
-
-        # Deformed images according to each individual transform
-        if 'sparse_deformed' in out:
-            full_mask = []
-            for i in range(out['sparse_deformed'].shape[1]):
-                image = out['sparse_deformed'][:, i].data.cpu()
-                image = F.interpolate(image, size=source.shape[1:3])
-                mask = out['mask'][:, i:(i + 1)].data.cpu().repeat(1, 3, 1, 1)
-                mask = F.interpolate(mask, size=source.shape[1:3])
-                image = np.transpose(image.numpy(), (0, 2, 3, 1))
-                mask = np.transpose(mask.numpy(), (0, 2, 3, 1))
-
-                if i != 0:
-                    color = np.array(self.colormap((i - 1) / (out['sparse_deformed'].shape[1] - 1)))[:3]
-                else:
-                    color = np.array((0, 0, 0))
-
-                color = color.reshape((1, 1, 1, 3))
-
-                images.append(image)
-                if i != 0:
-                    images.append(mask * color)
-                else:
-                    images.append(mask)
-
-                full_mask.append(mask * color)
-
-            images.append(sum(full_mask))
+            images.append((prediction1, prediction2))
+            images.append(kp_norm)
+        images.append((prediction1, prediction2))
 
         image = self.create_image_grid(*images)
         image = (255 * image).astype(np.uint8)

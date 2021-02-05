@@ -2,8 +2,6 @@ import matplotlib
 import os
 import sys
 import yaml
-import torch
-
 from argparse import ArgumentParser
 from time import gmtime, strftime
 from shutil import copy
@@ -13,6 +11,8 @@ from frames_dataset import FramesDataset
 from modules.generator import OcclusionAwareGenerator
 from modules.keypoint_detector import KPDetector
 
+import torch
+import multiprocessing
 from train import train
 from reconstruction import reconstruction
 from animate import animate
@@ -70,10 +70,11 @@ if __name__ == "__main__":
 
     if opt.mode == 'train':
         print("Training...")
-        train(config, generator, discriminator, kp_detector, opt.checkpoint, log_dir, dataset, opt.device_ids)
+        train(config, generator, kp_detector, opt.checkpoint, log_dir, dataset, opt.device_ids)
     elif opt.mode == 'reconstruction':
         print("Reconstruction...")
         reconstruction(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)
     elif opt.mode == 'animate':
+        # TODO multiprocessing.set_start_method('spawn', True)
         print("Animate...")
         animate(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)

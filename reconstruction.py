@@ -31,6 +31,8 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
 
     generator.eval()
     kp_detector.eval()
+    recon_gen_dir = './log/recon_gen'  # TODO
+    os.makedirs(recon_gen_dir, exist_ok=False)  #
 
     for it, x in tqdm(enumerate(dataloader)):
         if config['reconstruction_params']['num_videos'] is not None:
@@ -42,6 +44,10 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
             if torch.cuda.is_available():
                 x['video'] = x['video'].cuda()
             kp_source = kp_detector(x['video'][:, :, 0])
+
+            video_gen_dir = recon_gen_dir + '/' + x['name'][0]  # TODO
+            os.makedirs(video_gen_dir, exist_ok=False)  #
+
             for frame_idx in range(x['video'].shape[2]):
                 source = x['video'][:, :, 0]
                 driving = x['video'][:, :, frame_idx]
@@ -49,14 +55,19 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
                 out = generator(source, kp_source=kp_source, kp_driving=kp_driving)
                 out['kp_source'] = kp_source
                 out['kp_driving'] = kp_driving
-                del out['sparse_deformed']
-                predictions.append(np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                predictions.append(np.transpose(out['second_phase_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
 
                 visualization = Visualizer(**config['visualizer_params']).visualize(source=source,
                                                                                     driving=driving, out=out)
                 visualizations.append(visualization)
 
-                loss_list.append(torch.abs(out['prediction'] - driving).mean().cpu().numpy())
+                loss_list.append(torch.abs(out['second_phase_prediction'] - driving).mean().cpu().numpy())
+
+                frame_name = str(frame_idx).zfill(7) + '.png'
+                second_phase_prediction = out['second_phase_prediction'].data.cpu().numpy()
+                second_phase_prediction = np.transpose(second_phase_prediction, [0, 2, 3, 1])
+                second_phase_prediction = (255 * second_phase_prediction).astype(np.uint8)
+                imageio.imsave(os.path.join(video_gen_dir, frame_name), second_phase_prediction[0])
 
             predictions = np.concatenate(predictions, axis=1)
             imageio.imsave(os.path.join(png_dir, x['name'][0] + '.png'), (255 * predictions).astype(np.uint8))
@@ -64,4 +75,4 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
             image_name = x['name'][0] + config['reconstruction_params']['format']
             imageio.mimsave(os.path.join(log_dir, image_name), visualizations)
 
-    print("Reconstruction loss: %s" % np.mean(loss_list))
+    print(f'Reconstruction loss: {np.mean(loss_list)}')

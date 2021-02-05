@@ -10,17 +10,8 @@ class OcclusionAwareGenerator(nn.Module):
     induced by keypoints. Generator follows Johnson architecture.
     """
 
-    def __init__(self, num_channels, num_kp, block_expansion, max_features, num_down_blocks,
-                 num_bottleneck_blocks, estimate_occlusion_map=False, dense_motion_params=None, estimate_jacobian=False):
+    def __init__(self, num_channels, num_kp, block_expansion, max_features, num_down_blocks, num_bottleneck_blocks):
         super(OcclusionAwareGenerator, self).__init__()
-
-        if dense_motion_params is not None:
-            self.dense_motion_network = DenseMotionNetwork(num_kp=num_kp, num_channels=num_channels,
-                                                           estimate_occlusion_map=estimate_occlusion_map,
-                                                           **dense_motion_params)
-        else:
-            self.dense_motion_network = None
-
         self.first = SameBlock2d(num_channels, block_expansion, kernel_size=(7, 7), padding=(3, 3))
 
         down_blocks = []
@@ -43,17 +34,7 @@ class OcclusionAwareGenerator(nn.Module):
             self.bottleneck.add_module('r' + str(i), ResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
 
         self.final = nn.Conv2d(block_expansion, num_channels, kernel_size=(7, 7), padding=(3, 3))
-        self.estimate_occlusion_map = estimate_occlusion_map
         self.num_channels = num_channels
-
-    def deform_input(self, inp, deformation):
-        _, h_old, w_old, _ = deformation.shape
-        _, _, h, w = inp.shape
-        if h_old != h or w_old != w:
-            deformation = deformation.permute(0, 3, 1, 2)
-            deformation = F.interpolate(deformation, size=(h, w), mode='bilinear')
-            deformation = deformation.permute(0, 2, 3, 1)
-        return F.grid_sample(inp, deformation)
 
     def forward(self, source_image, kp_driving, kp_source):
         # Encoding (downsampling) part
