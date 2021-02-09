@@ -9,7 +9,7 @@
 # video id.
 dataset_params:
   # Path to data, data can be stored in several formats: .mp4 or .gif videos, stacked .png images or folders with frames.
-  root_dir: /home/orto/Videos
+  root_dir: /home/dcor/datasets/taichi/
   # Image shape, needed for staked .png format.
   frame_shape: [ 256, 256, 3 ]
   # In case of TaiChi single video can be splitted in many chunks, or the maybe several videos for single person.
@@ -38,8 +38,6 @@ model_params:
     num_channels: 3
     # Using first or zero order model
     estimate_jacobian: True
-    scale_factor: 0.25
-
   kp_detector_params:
     # Softmax temperature for keypoint heatmaps
     temperature: 0.1
@@ -51,6 +49,7 @@ model_params:
     num_blocks: 5
     # Keypioint is predicted on smaller images for better performance,
     # scale_factor=0.25 means that 256x256 image will be resized to 64x64
+    scale_factor: 0.25
   generator_params:
     # Number of features mutliplier
     block_expansion: 64
@@ -61,7 +60,19 @@ model_params:
     num_down_blocks: 2
     # Number of ResBlocks  in Jonson architecture.
     num_bottleneck_blocks: 6
+    # Use occlusion map or not
+    estimate_occlusion_map: True
 
+    dense_motion_params:
+      # Number of features mutliplier
+      block_expansion: 64
+      # Maximum allowed number of features
+      max_features: 1024
+      # Number of block in Unet. Can be increased or decreased depending or resolution.
+      num_blocks: 5
+      # Dense motion is predicted on smaller images for better performance,
+      # scale_factor=0.25 means that 256x256 image will be resized to 64x64
+      scale_factor: 0.25
   discriminator_params:
     # Discriminator can be multiscale, if you want 2 discriminator on original
     # resolution and half of the original, specify scales: [1, 0.5]
@@ -86,12 +97,12 @@ train_params:
   lr_generator: 2.0e-4
   lr_discriminator: 2.0e-4
   lr_kp_detector: 2.0e-4
-  batch_size: 2
+  batch_size: 30
   # Scales for perceptual pyramide loss. If scales = [1, 0.5, 0.25, 0.125] and image resolution is 256x256,
   # than the loss will be computer on resolutions 256x256, 128x128, 64x64, 32x32.
   scales: [ 1, 0.5, 0.25, 0.125 ]
   # Save checkpoint this frequently. If checkpoint_freq=50, checkpoint will be saved every 50 epochs.
-  checkpoint_freq: 5
+  checkpoint_freq: 4
   # Parameters of transform for equivariance loss
   transform_params:
     # Sigma for affine part
