@@ -1,1 +1,0 @@
-CUDA_VISIBLE_DEVICES=$1 TORCH_MODEL_ZOO=../torch ../myenv37/bin/python run.py --config config/taichi-256-downscale.yaml --device_ids 0
