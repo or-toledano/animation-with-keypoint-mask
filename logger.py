@@ -89,14 +89,6 @@ class Visualizer:
         self.draw_border = draw_border
         self.colormap = plt.get_cmap(colormap)
 
-    @staticmethod
-    def norm_float32_img(img):
-        mn = img.min()
-        mx = img.max()
-        mx -= mn
-        img = (img - mn) / mx
-        return img
-
     def create_image_column(self, images):
         if self.draw_border:
             images = np.copy(images)
@@ -117,13 +109,13 @@ class Visualizer:
         images.append(source)
         kp_source_int = out['kp_source_int'].data.cpu().numpy()
         kp_source_int = np.transpose(kp_source_int, [0, 2, 3, 1])
-        images.append(self.norm_float32_img(kp_source_int))
+        images.append(kp_source_int)
         driving = driving.data.cpu().numpy()
         driving = np.transpose(driving, [0, 2, 3, 1])
         images.append(driving)
         kp_driving_int = out['kp_driving_int'].data.cpu().numpy()
         kp_driving_int = np.transpose(kp_driving_int, [0, 2, 3, 1])
-        images.append(self.norm_float32_img(kp_driving_int))
+        images.append(kp_driving_int)
         low_res_prediction = out['low_res_prediction'].data.cpu().numpy()
         upscaled_prediction = out['upscaled_prediction'].data.cpu().numpy()
         low_res_prediction = np.transpose(low_res_prediction, [0, 2, 3, 1])
