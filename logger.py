@@ -84,8 +84,7 @@ class Logger:
 
 
 class Visualizer:
-    def __init__(self, kp_size=5, draw_border=False, colormap='gist_rainbow'):
-        self.kp_size = kp_size
+    def __init__(self, draw_border=False, colormap='gist_rainbow'):
         self.draw_border = draw_border
         self.colormap = plt.get_cmap(colormap)
 

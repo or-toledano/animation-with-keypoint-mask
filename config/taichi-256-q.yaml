@@ -121,8 +121,6 @@ animate_params:
 
 # Visualization parameters
 visualizer_params:
-  # Draw keypoints of this size, increase or decrease depending on resolution
-  kp_size: 5
   # Draw white border around images
   draw_border: True
   # Color map for keypoints
