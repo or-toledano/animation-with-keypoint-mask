@@ -11,7 +11,7 @@ dataset_params:
   # Path to data, data can be stored in several formats: .mp4 or .gif videos, stacked .png images or folders with frames.
   root_dir: /home/dcor/datasets/taichi/
   # Image shape, needed for staked .png format.
-  frame_shape: [256, 256, 3]
+  frame_shape: [ 256, 256, 3 ]
   # In case of TaiChi single video can be splitted in many chunks, or the maybe several videos for single person.
   # In this case epoch can be a pass over different videos (if id_sampling=True) or over different chunks (if id_sampling=False)
   # If the name of the video '12335#adsbf.mp4' the id is assumed to be 12335
@@ -33,23 +33,24 @@ dataset_params:
 model_params:
   common_params:
     # Number of keypoint
-    num_kp: 30
+    num_kp: 10
     # Number of channels per image
     num_channels: 3
     # Using first or zero order model
     estimate_jacobian: True
+    scale_factor: 0.25
+
   kp_detector_params:
-     # Softmax temperature for keypoint heatmaps
-     temperature: 0.1
-     # Number of features mutliplier
-     block_expansion: 32
-     # Maximum allowed number of features
-     max_features: 1024
-     # Number of block in Unet. Can be increased or decreased depending or resolution.
-     num_blocks: 5
-     # Keypioint is predicted on smaller images for better performance,
-     # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-     scale_factor: 0.25
+    # Softmax temperature for keypoint heatmaps
+    temperature: 0.1
+    # Number of features mutliplier
+    block_expansion: 32
+    # Maximum allowed number of features
+    max_features: 1024
+    # Number of block in Unet. Can be increased or decreased depending or resolution.
+    num_blocks: 5
+    # Keypioint is predicted on smaller images for better performance,
+    # scale_factor=0.25 means that 256x256 image will be resized to 64x64
   generator_params:
     # Number of features mutliplier
     block_expansion: 64
@@ -60,29 +61,7 @@ model_params:
     num_down_blocks: 2
     # Number of ResBlocks  in Jonson architecture.
     num_bottleneck_blocks: 6
-    # Use occlusion map or not
-    estimate_occlusion_map: True
 
-    dense_motion_params:
-      # Number of features mutliplier
-      block_expansion: 64
-      # Maximum allowed number of features
-      max_features: 1024
-      # Number of block in Unet. Can be increased or decreased depending or resolution.
-      num_blocks: 5
-      # Dense motion is predicted on smaller images for better performance,
-      # scale_factor=0.25 means that 256x256 image will be resized to 64x64
-      scale_factor: 0.25
-  discriminator_params:
-    # Discriminator can be multiscale, if you want 2 discriminator on original
-    # resolution and half of the original, specify scales: [1, 0.5]
-    scales: [1]
-    # Number of features mutliplier
-    block_expansion: 32
-    # Maximum allowed number of features
-    max_features: 512
-    # Number of blocks. Can be increased or decreased depending or resolution.
-    num_blocks: 4
 
 # Parameters of training
 train_params:
@@ -92,34 +71,27 @@ train_params:
   # Thus effectivlly with num_repeats=100 each epoch is 100 times larger. 
   num_repeats: 150
   # Drop learning rate by 10 times after this epochs 
-  epoch_milestones: [60, 90]
+  epoch_milestones: [ 60, 90 ]
   # Initial learing rate for all modules
   lr_generator: 2.0e-4
   lr_discriminator: 2.0e-4
   lr_kp_detector: 2.0e-4
-  batch_size: 30
+  batch_size: 2
   # Scales for perceptual pyramide loss. If scales = [1, 0.5, 0.25, 0.125] and image resolution is 256x256,
   # than the loss will be computer on resolutions 256x256, 128x128, 64x64, 32x32.
-  scales: [1, 0.5, 0.25, 0.125]
+  scales: [ 1, 0.5, 0.25, 0.125 ]
   # Save checkpoint this frequently. If checkpoint_freq=50, checkpoint will be saved every 50 epochs.
-  checkpoint_freq: 4
+  checkpoint_freq: 5
   # Parameters of transform for equivariance loss
-  transform_params:
-    # Sigma for affine part
-    sigma_affine: 0.05
-    # Sigma for deformation part
-    sigma_tps: 0.005
-    # Number of point in the deformation grid
-    points_tps: 5
   loss_weights:
     # Weight for LSGAN loss in generator, 0 for no adversarial loss.
     generator_gan: 0
     # Weight for LSGAN loss in discriminator
     discriminator_gan: 1
     # Weights for feature matching loss, the number should be the same as number of blocks in discriminator.
-    feature_matching: [10, 10, 10, 10]
+    feature_matching: [ 10, 10, 10, 10 ]
     # Weights for perceptual loss.
-    perceptual: [10, 10, 10, 10, 10]
+    perceptual: [ 10, 10, 10, 10, 10 ]
     # Weights for value equivariance.
     equivariance_value: 10
     # Weights for jacobian equivariance.
@@ -149,8 +121,6 @@ animate_params:
 
 # Visualization parameters
 visualizer_params:
-  # Draw keypoints of this size, increase or decrease depending on resolution
-  kp_size: 5
   # Draw white border around images
   draw_border: True
   # Color map for keypoints
