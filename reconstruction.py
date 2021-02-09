@@ -55,19 +55,19 @@ def reconstruction(config, generator, kp_detector, checkpoint, log_dir, dataset)
                 out = generator(source, kp_source=kp_source, kp_driving=kp_driving)
                 out['kp_source'] = kp_source
                 out['kp_driving'] = kp_driving
-                predictions.append(np.transpose(out['second_phase_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                predictions.append(np.transpose(out['upscaled_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
 
                 visualization = Visualizer(**config['visualizer_params']).visualize(source=source,
                                                                                     driving=driving, out=out)
                 visualizations.append(visualization)
 
-                loss_list.append(torch.abs(out['second_phase_prediction'] - driving).mean().cpu().numpy())
+                loss_list.append(torch.abs(out['upscaled_prediction'] - driving).mean().cpu().numpy())
 
                 frame_name = str(frame_idx).zfill(7) + '.png'
-                second_phase_prediction = out['second_phase_prediction'].data.cpu().numpy()
-                second_phase_prediction = np.transpose(second_phase_prediction, [0, 2, 3, 1])
-                second_phase_prediction = (255 * second_phase_prediction).astype(np.uint8)
-                imageio.imsave(os.path.join(video_gen_dir, frame_name), second_phase_prediction[0])
+                upscaled_prediction = out['upscaled_prediction'].data.cpu().numpy()
+                upscaled_prediction = np.transpose(upscaled_prediction, [0, 2, 3, 1])
+                upscaled_prediction = (255 * upscaled_prediction).astype(np.uint8)
+                imageio.imsave(os.path.join(video_gen_dir, frame_name), upscaled_prediction[0])
 
             predictions = np.concatenate(predictions, axis=1)
             imageio.imsave(os.path.join(png_dir, x['name'][0] + '.png'), (255 * predictions).astype(np.uint8))

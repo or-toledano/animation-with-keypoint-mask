@@ -87,7 +87,7 @@ class UpBlock2d(nn.Module):
         self.norm = BatchNorm2d(out_features, affine=True)
 
     def forward(self, x):
-        out = F.interpolate(x, scale_factor=2)
+        out = F.interpolate(x, scale_factor=2, recompute_scale_factor=True)
         out = self.conv(out)
         out = self.norm(out)
         out = F.relu(out)

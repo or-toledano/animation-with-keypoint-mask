@@ -8,7 +8,7 @@ from shutil import copy
 
 from frames_dataset import FramesDataset
 
-from modules.generator import OcclusionAwareGenerator
+from modules.generator import Generator
 from modules.keypoint_detector import KPDetector
 
 import torch
@@ -28,15 +28,17 @@ if __name__ == "__main__":
     parser.add_argument("--config", required=True, help="path to config")
     parser.add_argument("--mode", default="train", choices=["train", "reconstruction", "animate"])
     parser.add_argument("--log_dir", default='log', help="path to log into")
+    parser.add_argument("--checkpoint_with_kp", required=True, help="path to checkpoint with pretrained kp detector")
     parser.add_argument("--checkpoint", default=None, help="path to checkpoint to restore")
     parser.add_argument("--device_ids", default="0", type=lambda x: list(map(int, x.split(','))),
                         help="Names of the devices comma separated.")
     parser.add_argument("--verbose", dest="verbose", action="store_true", help="Print model architecture")
+    parser.add_argument("--cpu", default=False, action="store_true", help="Run on cpu")
     parser.set_defaults(verbose=False)
 
     opt = parser.parse_args()
     with open(opt.config) as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     if opt.checkpoint is not None:
         log_dir = os.path.join(*os.path.split(opt.checkpoint)[:-1])
@@ -44,15 +46,17 @@ if __name__ == "__main__":
         log_dir = os.path.join(opt.log_dir, os.path.basename(opt.config).split('.')[0])
         log_dir += ' ' + strftime("%d_%m_%y_%H.%M.%S", gmtime())
 
-    generator = OcclusionAwareGenerator(**config['model_params']['generator_params'],
-                                        **config['model_params']['common_params'])
+    generator = Generator(**config['model_params']['generator_params'],
+                          **config['model_params']['common_params'])
 
     if torch.cuda.is_available():
         generator.to(opt.device_ids[0])
     if opt.verbose:
         print(generator)
 
-    kp_detector = KPDetector(**config['model_params']['kp_detector_params'],
+    checkpoint_with_kp = torch.load(opt.checkpoint_with_kp, map_location='cpu' if opt.cpu else None)
+
+    kp_detector = KPDetector(checkpoint_with_kp, **config['model_params']['kp_detector_params'],
                              **config['model_params']['common_params'])
 
     if torch.cuda.is_available():
@@ -75,6 +79,5 @@ if __name__ == "__main__":
         print("Reconstruction...")
         reconstruction(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)
     elif opt.mode == 'animate':
-        # TODO multiprocessing.set_start_method('spawn', True)
         print("Animate...")
         animate(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)

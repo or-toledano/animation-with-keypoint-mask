@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-import torch.nn.functional as F
 import imageio
 
 import os
@@ -49,8 +48,7 @@ class Logger:
             torch.save(cpk, cpk_path)
 
     @staticmethod
-    def load_cpk(checkpoint_path, generator=None, kp_detector=None,
-                 optimizer_generator=None):
+    def load_cpk(checkpoint_path, generator=None, kp_detector=None, optimizer_generator=None):
         if torch.cuda.is_available():
             map_location = None
         else:
@@ -101,24 +99,16 @@ class Visualizer:
             image[rr, cc] = np.array(self.colormap(kp_ind / num_kp))[:3]
         return image
 
-    def create_image_column_with_kp(self, images, kp):
-        image_array = np.array([self.draw_image_with_kp(v, k) for v, k in zip(images, kp)])
-        return self.create_image_column(image_array)
-
     def create_image_column(self, images):
         if self.draw_border:
             images = np.copy(images)
-            images[:, :, [0, -1]] = (1, 1, 1)  # TODO why is this duplicated?
             images[:, :, [0, -1]] = (1, 1, 1)
         return np.concatenate(list(images), axis=0)
 
     def create_image_grid(self, *args):
         out = []
         for arg in args:
-            if type(arg) == tuple:
-                out.append(self.create_image_column_with_kp(arg[0], arg[1]))
-            else:
-                out.append(self.create_image_column(arg))
+            out.append(self.create_image_column(arg))
         return np.concatenate(out, axis=1)
 
     def visualize(self, driving, source, out):
@@ -126,28 +116,33 @@ class Visualizer:
 
         # Source image with keypoints
         source = source.data.cpu()
-        kp_source = out['kp_source']['value'].data.cpu().numpy()
+        kp_source = out['kp_source'].data.cpu().numpy()
+
         source = np.transpose(source, [0, 2, 3, 1])
-        images.append((source, kp_source))
+        images.append(source)
+        images.append(kp_source)
 
         # Driving image with keypoints
-        kp_driving = out['kp_driving']['value'].data.cpu().numpy()
+        kp_driving = out['kp_driving'].data.cpu().numpy()
         driving = driving.data.cpu().numpy()
         driving = np.transpose(driving, [0, 2, 3, 1])
-        images.append((driving, kp_driving))
+        images.append(driving)
+        images.append(kp_driving)
 
         # Result with and without keypoints
-        prediction1 = out['first_phase_prediction'].data.cpu().numpy()
-        prediction2 = out['second_phase_prediction'].data.cpu().numpy()
-        prediction1 = np.transpose(prediction1, [0, 2, 3, 1])
-        prediction2 = np.transpose(prediction2, [0, 2, 3, 1])
-        images.append(prediction1)
-        images.append(prediction2)
+        low_res_prediction = out['low_res_prediction'].data.cpu().numpy()
+        upscaled_prediction = out['upscaled_prediction'].data.cpu().numpy()
+        low_res_prediction = np.transpose(low_res_prediction, [0, 2, 3, 1])
+        upscaled_prediction = np.transpose(upscaled_prediction, [0, 2, 3, 1])
+        images.append(low_res_prediction)
+        images.append(upscaled_prediction)
         if 'kp_norm' in out:
             kp_norm = out['kp_norm']['value'].data.cpu().numpy()
-            images.append((prediction1, prediction2))
+            images.append(low_res_prediction)
+            images.append(upscaled_prediction)
             images.append(kp_norm)
-        images.append((prediction1, prediction2))
+        images.append(low_res_prediction)
+        images.append(upscaled_prediction)
 
         image = self.create_image_grid(*images)
         image = (255 * image).astype(np.uint8)

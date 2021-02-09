@@ -1,7 +1,8 @@
 from torch import nn
 import torch
-import torch.nn.functional as F
 from modules.util import Hourglass, make_coordinate_grid, AntiAliasInterpolation2d
+import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 
 class KPDetector(nn.Module):
@@ -9,7 +10,7 @@ class KPDetector(nn.Module):
     Detecting a keypoints. Return keypoint position and jacobian near each keypoint.
     """
 
-    def __init__(self, block_expansion, num_kp, num_channels, max_features,
+    def __init__(self, checkpoint_with_kp, block_expansion, num_kp, num_channels, max_features,
                  num_blocks, temperature, estimate_jacobian=False, scale_factor=1,
                  single_jacobian_map=False, pad=0):
         super(KPDetector, self).__init__()
@@ -34,6 +35,8 @@ class KPDetector(nn.Module):
         if self.scale_factor != 1:
             self.down = AntiAliasInterpolation2d(num_channels, self.scale_factor)
 
+        self.load_state_dict(checkpoint_with_kp['kp_detector'])
+
     def gaussian2kp(self, heatmap):
         """
         Extract the mean and from a heatmap
@@ -52,24 +55,9 @@ class KPDetector(nn.Module):
 
         feature_map = self.predictor(x)
         prediction = self.kp(feature_map)
-
-        final_shape = prediction.shape
-        heatmap = prediction.view(final_shape[0], final_shape[1], -1)
-        heatmap = F.softmax(heatmap / self.temperature, dim=2)
-        heatmap = heatmap.view(*final_shape)
-
-        out = self.gaussian2kp(heatmap)
-
-        if self.jacobian is not None:
-            jacobian_map = self.jacobian(feature_map)
-            jacobian_map = jacobian_map.reshape(final_shape[0], self.num_jacobian_maps, 4, final_shape[2],
-                                                final_shape[3])
-            heatmap = heatmap.unsqueeze(2)
-
-            jacobian = heatmap * jacobian_map
-            jacobian = jacobian.view(final_shape[0], final_shape[1], 4, -1)
-            jacobian = jacobian.sum(dim=-1)
-            jacobian = jacobian.view(jacobian.shape[0], jacobian.shape[1], 2, 2)
-            out['jacobian'] = jacobian
-
+        out = prediction.sum(1)
+        pad = (x.shape[2] - out.shape[1]) // 2
+        pad_layer = torch.nn.ZeroPad2d(pad)
+        out = pad_layer(out)
+        out = out.unsqueeze(1)
         return out

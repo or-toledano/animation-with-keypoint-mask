@@ -8,20 +8,18 @@ from argparse import ArgumentParser
 from time import gmtime, strftime
 from skimage.transform import resize
 from logger import Visualizer
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 from matplotlib.pyplot import imshow
 from time import sleep
 from modules.util import Hourglass, AntiAliasInterpolation2d, make_coordinate_grid, kp2gaussian
 
-import matplotlib.pyplot as plt
 
-
-def run_kp(config, checkpoint, image: np.ndarray):
+def run_kp_old(config, checkpoint, image: np.ndarray):
     image_np = resize(image, (256, 256))[..., :3]
     image = torch.Tensor(image_np[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2)
     kp_params = config['model_params']['kp_detector_params']
     common_params = config['model_params']['common_params']  # TODO estimate_jacobian false
-    kp_detector = KPDetector(**kp_params, **common_params)
+    kp_detector = KPDetector(checkpoint, **kp_params, **common_params)
 
     if kp_detector is not None:
         kp_detector_checkpoint = checkpoint['kp_detector']
@@ -37,8 +35,30 @@ def run_kp(config, checkpoint, image: np.ndarray):
     kp_n: np.ndarray = np.squeeze(kp_t.detach().numpy())
     with_kp: np.ndarray = v.draw_image_with_kp(image_np, kp_n)
     imshow(with_kp)
-    plot.show()
+    plt.show()
     return
+
+
+def run_kp(config, checkpoint, image: np.ndarray):
+    image_np = resize(image, (256, 256))[..., :3]
+    image = torch.Tensor(image_np[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2)
+    kp_params = config['model_params']['kp_detector_params']
+    common_params = config['model_params']['common_params']
+    kp_detector = KPDetector(checkpoint, **kp_params, **common_params)
+
+    if kp_detector is not None:
+        kp_detector_checkpoint = checkpoint['kp_detector']
+        kp_detector.load_state_dict(kp_detector_checkpoint)
+
+    kp_source = kp_detector(image)
+    kp_source = kp_source.detach()
+    imshow(kp_source.permute(1, 2, 0))
+    plt.show()
+    return
+
+
+def gen_input():
+    pass
 
 
 def main():
@@ -56,7 +76,7 @@ def main():
 
     opt = parser.parse_args()
     with open(opt.config) as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     if opt.checkpoint is not None:
         log_dir = os.path.join(*os.path.split(opt.checkpoint)[:-1])

@@ -81,8 +81,8 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset):
                 out['kp_source'] = kp_source
                 out['kp_norm'] = kp_norm
 
-                predictions.append(np.transpose(out['first_phase_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
-                predictions.append(np.transpose(out['second_phase_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                predictions.append(np.transpose(out['low_res_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                predictions.append(np.transpose(out['upscaled_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
 
                 visualization = Visualizer(**config['visualizer_params']).visualize(source=source_frame,
                                                                                     driving=driving_frame, out=out)

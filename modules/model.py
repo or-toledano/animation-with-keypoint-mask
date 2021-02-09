@@ -1,16 +1,15 @@
 from torch import nn
 import torch
-import torch.nn.functional as F
 from modules.util import AntiAliasInterpolation2d
 from torchvision import models
 import numpy as np
-from torch.autograd import grad
 
 
 class Vgg19(torch.nn.Module):
     """
     Vgg19 network for perceptual loss. See Sec 3.3.
     """
+
     def __init__(self, requires_grad=False):
         super(Vgg19, self).__init__()
         vgg_pretrained_features = models.vgg19(pretrained=True).features
@@ -54,6 +53,7 @@ class ImagePyramide(torch.nn.Module):
     """
     Create image pyramide for computing pyramide perceptual loss.
     """
+
     def __init__(self, scales, num_channels):
         super(ImagePyramide, self).__init__()
         downs = {}
@@ -101,17 +101,23 @@ class GeneratorFullModel(torch.nn.Module):
         loss_values = {}
 
         pyramide_real = self.pyramid(x['driving'])
-        pyramide_generated = self.pyramid(generated['prediction'])
+        pyramide_low_res = self.pyramid(generated['low_res_prediction'])
+        pyramide_upscaled = self.pyramid(generated['upscaled_prediction'])
 
         if sum(self.loss_weights['perceptual']) != 0:
-            value_total = 0
+            value_total1 = 0
+            value_total2 = 0
             for scale in self.scales:
-                x_vgg = self.vgg(pyramide_generated['prediction_' + str(scale)])
+                x_vgg1 = self.vgg(pyramide_low_res['prediction_' + str(scale)])
+                x_vgg2 = self.vgg(pyramide_upscaled['prediction_' + str(scale)])
                 y_vgg = self.vgg(pyramide_real['prediction_' + str(scale)])
 
                 for i, weight in enumerate(self.loss_weights['perceptual']):
-                    value = torch.abs(x_vgg[i] - y_vgg[i].detach()).mean()
-                    value_total += self.loss_weights['perceptual'][i] * value
-                loss_values['perceptual'] = value_total
+                    value1 = torch.abs(x_vgg1[i] - y_vgg[i].detach()).mean()
+                    value2 = torch.abs(x_vgg2[i] - y_vgg[i].detach()).mean()
+                    value_total1 += self.loss_weights['perceptual'][i] * value1
+                    value_total2 += self.loss_weights['perceptual'][i] * value2
+                loss_values['perceptual1'] = value_total1
+                loss_values['perceptual2'] = value_total2
 
         return loss_values, generated
