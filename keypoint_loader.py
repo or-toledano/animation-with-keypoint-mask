@@ -18,7 +18,7 @@ def run_kp_old(config, checkpoint, image: np.ndarray):
     image_np = resize(image, (256, 256))[..., :3]
     image = torch.Tensor(image_np[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2)
     kp_params = config['model_params']['kp_detector_params']
-    common_params = config['model_params']['common_params']  # TODO estimate_jacobian false
+    common_params = config['model_params']['common_params']
     kp_detector = KPDetector(checkpoint, **kp_params, **common_params)
 
     if kp_detector is not None:
@@ -63,15 +63,15 @@ def gen_input():
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("--config", required=True, help="path to config")
-    parser.add_argument("--source", required=True, help="path to source")
-    parser.add_argument("--mode", default="train", choices=["train", "reconstruction", "animate"])
-    parser.add_argument("--log_dir", default='log', help="path to log into")
-    parser.add_argument("--checkpoint", default=None, help="path to checkpoint to restore")
-    parser.add_argument("--device_ids", default="0", type=lambda x: list(map(int, x.split(','))),
-                        help="Names of the devices comma separated.")
-    parser.add_argument("--verbose", dest="verbose", action="store_true", help="Print model architecture")
-    parser.add_argument("--cpu", default=False, action="store_true", help="Run on cpu")
+    parser.add_argument('--config', required=True, help='path to config')
+    parser.add_argument('--source', required=True, help='path to source')
+    parser.add_argument('--mode', default='train', choices=['train', 'reconstruction', 'animate'])
+    parser.add_argument('--log_dir', default='log', help='path to log into')
+    parser.add_argument('--checkpoint', default=None, help='path to checkpoint to restore')
+    parser.add_argument('--device_ids', default='0', type=lambda x: list(map(int, x.split(','))),
+                        help='Names of the devices comma separated.')
+    parser.add_argument('--verbose', dest='verbose', action='store_true', help='Print model architecture')
+    parser.add_argument('--cpu', default=False, action='store_true', help='Run on cpu')
     parser.set_defaults(verbose=False)
 
     opt = parser.parse_args()

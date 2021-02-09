@@ -19,21 +19,21 @@ from animate import animate
 
 matplotlib.use('Agg')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     if sys.version_info[0] < 3:
-        raise Exception("You must use Python 3 or higher. Recommended version is Python 3.7")
+        raise Exception('You must use Python 3 or higher. Recommended version is Python 3.7')
 
     parser = ArgumentParser()
-    parser.add_argument("--config", required=True, help="path to config")
-    parser.add_argument("--mode", default="train", choices=["train", "reconstruction", "animate"])
-    parser.add_argument("--log_dir", default='log', help="path to log into")
-    parser.add_argument("--checkpoint_with_kp", required=True, help="path to checkpoint with pretrained kp detector")
-    parser.add_argument("--checkpoint", default=None, help="path to checkpoint to restore")
-    parser.add_argument("--device_ids", default="0", type=lambda x: list(map(int, x.split(','))),
-                        help="Names of the devices comma separated.")
-    parser.add_argument("--verbose", dest="verbose", action="store_true", help="Print model architecture")
-    parser.add_argument("--cpu", default=False, action="store_true", help="Run on cpu")
+    parser.add_argument('--config', required=True, help='path to config')
+    parser.add_argument('--mode', default='train', choices=['train', 'reconstruction', 'animate'])
+    parser.add_argument('--log_dir', default='log', help='path to log into')
+    parser.add_argument('--checkpoint_with_kp', required=True, help='path to checkpoint with pretrained kp detector')
+    parser.add_argument('--checkpoint', default=None, help='path to checkpoint to restore')
+    parser.add_argument('--device_ids', default='0', type=lambda x: list(map(int, x.split(','))),
+                        help='Names of the devices comma separated.')
+    parser.add_argument('--verbose', dest='verbose', action='store_true', help='Print model architecture')
+    parser.add_argument('--cpu', default=False, action='store_true', help='Run on cpu')
     parser.set_defaults(verbose=False)
 
     opt = parser.parse_args()
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         log_dir = os.path.join(*os.path.split(opt.checkpoint)[:-1])
     else:
         log_dir = os.path.join(opt.log_dir, os.path.basename(opt.config).split('.')[0])
-        log_dir += ' ' + strftime("%d_%m_%y_%H.%M.%S", gmtime())
+        log_dir += ' ' + strftime('%d_%m_%y_%H.%M.%S', gmtime())
 
     generator = Generator(**config['model_params']['generator_params'],
                           **config['model_params']['common_params'])
@@ -73,11 +73,11 @@ if __name__ == "__main__":
         copy(opt.config, log_dir)
 
     if opt.mode == 'train':
-        print("Training...")
+        print('Training...')
         train(config, generator, kp_detector, opt.checkpoint, log_dir, dataset, opt.device_ids)
     elif opt.mode == 'reconstruction':
-        print("Reconstruction...")
+        print('Reconstruction...')
         reconstruction(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)
     elif opt.mode == 'animate':
-        print("Animate...")
+        print('Animate...')
         animate(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)

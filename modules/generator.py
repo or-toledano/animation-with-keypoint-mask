@@ -2,7 +2,6 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from modules.util import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, Hourglass, AntiAliasInterpolation2d
-from keypoint_loader import gen_input
 
 
 class Generator(nn.Module):
@@ -39,9 +38,8 @@ class Generator(nn.Module):
 
     def forward(self, source_image, kp_source, kp_driving):
         output_dict = {}
-        # Encoding (downsampling) part
         smaller_source = self.source_first(source_image)
-        out = torch.cat((smaller_source, kp_source, kp_driving), dim=1)
+        out = torch.cat((smaller_source, kp_source, kp_driving), dim=1)  # Encoding part
         out = self.first(out)
         out = self.bottleneck(out)  # Decoding part
         for i in range(len(self.up_blocks)):
@@ -59,8 +57,8 @@ class Generator(nn.Module):
         out = self.final_hourglass(out)
         upscaled_prediction = torch.sigmoid(out)
 
-        output_dict['kp_source'] = kp_source.repeat(1, 3, 1, 1)
-        output_dict['kp_driving'] = kp_driving.repeat(1, 3, 1, 1)
+        output_dict['kp_source_int'] = kp_source_int.repeat(1, 3, 1, 1)
+        output_dict['kp_driving_int'] = kp_driving_int.repeat(1, 3, 1, 1)
         output_dict['low_res_prediction'] = low_res_prediction
         output_dict['upscaled_prediction'] = upscaled_prediction
         return output_dict

@@ -89,21 +89,20 @@ class Visualizer:
         self.draw_border = draw_border
         self.colormap = plt.get_cmap(colormap)
 
-    def draw_image_with_kp(self, image, kp_array: np.ndarray):  # TODO kp_array
-        image = np.copy(image)
-        spatial_size = np.array(image.shape[:2][::-1])[np.newaxis]
-        kp_array = spatial_size * (kp_array + 1) / 2
-        num_kp = kp_array.shape[0]
-        for kp_ind, kp in enumerate(kp_array):
-            rr, cc = circle(kp[1], kp[0], self.kp_size, shape=image.shape[:2])
-            image[rr, cc] = np.array(self.colormap(kp_ind / num_kp))[:3]
-        return image
+    @staticmethod
+    def norm_float32_img(img):
+        mn = img.min()
+        mx = img.max()
+        mx -= mn
+        img = (img - mn) / mx
+        return img
 
     def create_image_column(self, images):
         if self.draw_border:
             images = np.copy(images)
             images[:, :, [0, -1]] = (1, 1, 1)
-        return np.concatenate(list(images), axis=0)
+        column = np.concatenate(list(images), axis=0)
+        return column
 
     def create_image_grid(self, *args):
         out = []
@@ -113,36 +112,28 @@ class Visualizer:
 
     def visualize(self, driving, source, out):
         images = []
-
-        # Source image with keypoints
         source = source.data.cpu()
-        kp_source = out['kp_source'].data.cpu().numpy()
-
         source = np.transpose(source, [0, 2, 3, 1])
         images.append(source)
-        images.append(kp_source)
-
-        # Driving image with keypoints
-        kp_driving = out['kp_driving'].data.cpu().numpy()
+        kp_source_int = out['kp_source_int'].data.cpu().numpy()
+        kp_source_int = np.transpose(kp_source_int, [0, 2, 3, 1])
+        images.append(self.norm_float32_img(kp_source_int))
         driving = driving.data.cpu().numpy()
         driving = np.transpose(driving, [0, 2, 3, 1])
         images.append(driving)
-        images.append(kp_driving)
-
-        # Result with and without keypoints
+        kp_driving_int = out['kp_driving_int'].data.cpu().numpy()
+        kp_driving_int = np.transpose(kp_driving_int, [0, 2, 3, 1])
+        images.append(self.norm_float32_img(kp_driving_int))
         low_res_prediction = out['low_res_prediction'].data.cpu().numpy()
         upscaled_prediction = out['upscaled_prediction'].data.cpu().numpy()
         low_res_prediction = np.transpose(low_res_prediction, [0, 2, 3, 1])
         upscaled_prediction = np.transpose(upscaled_prediction, [0, 2, 3, 1])
         images.append(low_res_prediction)
         images.append(upscaled_prediction)
+
         if 'kp_norm' in out:
             kp_norm = out['kp_norm']['value'].data.cpu().numpy()
-            images.append(low_res_prediction)
-            images.append(upscaled_prediction)
             images.append(kp_norm)
-        images.append(low_res_prediction)
-        images.append(upscaled_prediction)
 
         image = self.create_image_grid(*images)
         image = (255 * image).astype(np.uint8)
