@@ -9,7 +9,7 @@ from shutil import copy
 from frames_dataset import FramesDataset
 
 from modules.generator import Generator
-from modules.keypoint_detector import KPDetector
+from modules.keypoint_detector import KPDetector, FommKpDetector
 
 import torch
 import multiprocessing
@@ -80,4 +80,8 @@ if __name__ == '__main__':
         reconstruction(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)
     elif opt.mode == 'animate':
         print('Animate...')
-        animate(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)
+        kp_after_softmax = config['model_params']['kp_detector_params']
+        if kp_after_softmax:
+            kp_detector = FommKpDetector(checkpoint_with_kp, **config['model_params']['kp_detector_params'],
+                                         **config['model_params']['common_params'])
+        animate(config, generator, kp_detector, opt.checkpoint, log_dir, dataset, kp_after_softmax)

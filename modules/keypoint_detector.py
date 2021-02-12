@@ -52,6 +52,28 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     return out
 
 
+def norm_mask(x, mask):
+    old_size = mask.size()
+    out = mask.view(mask.size(0), -1)
+    mn = out.min(1, keepdim=True)[0]
+    out -= mn
+    mx = out.max(1, keepdim=True)[0]
+    out /= mx
+    out = out.view(old_size)
+
+    pad = (x.shape[2] - out.shape[1]) // 2
+    pad_layer = torch.nn.ZeroPad2d(pad)
+    out = pad_layer(out)
+    out = out.unsqueeze(1)
+    return out
+
+
+def draw_kp(x, kp, kp_variance=0.01):
+    res = kp2gaussian(kp, x.shape[2:], kp_variance)
+    res = res.sum(1)
+    return res
+
+
 class KPDetector(nn.Module):
     """
     Detecting a keypoints. Return keypoint position and jacobian near each keypoint.
@@ -59,7 +81,7 @@ class KPDetector(nn.Module):
 
     def __init__(self, checkpoint_with_kp, block_expansion, num_kp, kp_after_softmax, num_channels, max_features,
                  num_blocks, temperature, estimate_jacobian=False, scale_factor=1,
-                 single_jacobian_map=False, pad=0, kp_variance=0.01):
+                 single_jacobian_map=False, pad=0):
         super(KPDetector, self).__init__()
 
         self.predictor = Hourglass(block_expansion, in_features=num_channels,
@@ -83,8 +105,6 @@ class KPDetector(nn.Module):
         self.scale_factor = scale_factor
         if self.scale_factor != 1:
             self.down = AntiAliasInterpolation2d(num_channels, self.scale_factor)
-
-        self.kp_variance = kp_variance
 
         self.load_state_dict(checkpoint_with_kp['kp_detector'])
 
@@ -113,25 +133,12 @@ class KPDetector(nn.Module):
             heatmap = F.softmax(heatmap / self.temperature, dim=2)
             heatmap = heatmap.view(*final_shape)
             out = self.gaussian2kp(heatmap)
-            out = kp2gaussian(out, x.shape[2:], self.kp_variance)
-            vis10(x, out)
-            out = out.sum(1)
-            vis(x, out)
+            out = draw_kp(x, out)
         else:
             out = prediction.sum(1)
 
-        old_size = out.size()
-        out = out.view(out.size(0), -1)
-        mn = out.min(1, keepdim=True)[0]
-        out -= mn
-        mx = out.max(1, keepdim=True)[0]
-        out /= mx
-        out = out.view(old_size)
+        out = norm_mask(x, out)
 
-        pad = (x.shape[2] - out.shape[1]) // 2
-        pad_layer = torch.nn.ZeroPad2d(pad)
-        out = pad_layer(out)
-        out = out.unsqueeze(1)
         return out
 
 

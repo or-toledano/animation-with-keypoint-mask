@@ -122,9 +122,10 @@ class Visualizer:
         images.append(low_res_prediction)
         images.append(upscaled_prediction)
 
-        if 'kp_norm' in out:
-            kp_norm = out['kp_norm']['value'].data.cpu().numpy()
-            images.append(kp_norm)
+        if 'kp_norm_int' in out:
+            kp_norm_int = out['kp_norm_int'].data.cpu().numpy()
+            kp_norm_int = np.transpose(kp_norm_int, [0, 2, 3, 1])
+            images.append(kp_norm_int)
 
         image = self.create_image_grid(*images)
         image = (255 * image).astype(np.uint8)
