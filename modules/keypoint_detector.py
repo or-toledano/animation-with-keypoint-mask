@@ -4,28 +4,31 @@ from modules.util import Hourglass, make_coordinate_grid, AntiAliasInterpolation
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
+VERBOSE = True
+
 
 def vis(x, m):
-    viz = m.permute(1, 2, 0)
-    viz = viz.detach()
-    fig = plt.figure()
-    fig.add_subplot(1, 2, 1)
-    plt.imshow(x.permute(2, 3, 1, 0).squeeze())
-    fig.add_subplot(1, 2, 2)
-    plt.imshow(viz)
-    plt.show()
+    if VERBOSE:
+        viz = m.permute(1, 2, 0)
+        viz = viz.detach()
+        fig = plt.figure()
+        fig.add_subplot(1, 2, 1)
+        plt.imshow(x.permute(2, 3, 1, 0).squeeze())
+        fig.add_subplot(1, 2, 2)
+        plt.imshow(viz)
+        plt.show()
 
 
-def vis10(x, map):
-    viz = map.permute(1, 2, 3, 0)
-    viz = viz.detach()
-    fig = plt.figure()
-    fig.add_subplot(1, 10, 1)
-    plt.imshow(x.permute(2, 3, 1, 0).squeeze())
-    for i in range(1, 11):
-        fig.add_subplot(2, 10, i)
-        plt.imshow(viz[i - 1])
-    plt.show()
+def vis_10(m):
+    if VERBOSE:
+        viz = m.permute(1, 2, 3, 0)
+        viz = viz.detach()
+        fig = plt.figure()
+
+        for i in range(1, 11):
+            fig.add_subplot(1, 10, i)
+            plt.imshow(viz[i - 1])
+        plt.show()
 
 
 def kp2gaussian(kp, spatial_size, kp_variance):
@@ -70,6 +73,7 @@ def norm_mask(shape, mask):
 
 def draw_kp(shape, kp, kp_variance=0.01):
     res = kp2gaussian(kp, shape, kp_variance)
+    vis_10(res)
     res = res.sum(1)
     return res
 
@@ -135,9 +139,11 @@ class KPDetector(nn.Module):
             out = self.gaussian2kp(heatmap)
             out = draw_kp(final_shape[2:], out)
         else:
+            vis_10(prediction)
             out = prediction.sum(1)
-
+        vis(x, out)
         out = norm_mask(x.shape[2], out)
+
         return out
 
 
