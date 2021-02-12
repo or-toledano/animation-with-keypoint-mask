@@ -32,6 +32,7 @@ dataset_params:
 # Defines model architecture
 model_params:
   common_params:
+    kp_after_softmax: True
     # Number of keypoint
     num_kp: 10
     # Number of channels per image
