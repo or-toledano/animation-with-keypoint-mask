@@ -52,7 +52,7 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     return out
 
 
-def norm_mask(x, mask):
+def norm_mask(shape, mask):
     old_size = mask.size()
     out = mask.view(mask.size(0), -1)
     mn = out.min(1, keepdim=True)[0]
@@ -61,15 +61,15 @@ def norm_mask(x, mask):
     out /= mx
     out = out.view(old_size)
 
-    pad = (x.shape[2] - out.shape[1]) // 2
+    pad = (shape - out.shape[1]) // 2
     pad_layer = torch.nn.ZeroPad2d(pad)
     out = pad_layer(out)
     out = out.unsqueeze(1)
     return out
 
 
-def draw_kp(x, kp, kp_variance=0.01):
-    res = kp2gaussian(kp, x.shape[2:], kp_variance)
+def draw_kp(shape, kp, kp_variance=0.01):
+    res = kp2gaussian(kp, shape, kp_variance)
     res = res.sum(1)
     return res
 
@@ -133,11 +133,11 @@ class KPDetector(nn.Module):
             heatmap = F.softmax(heatmap / self.temperature, dim=2)
             heatmap = heatmap.view(*final_shape)
             out = self.gaussian2kp(heatmap)
-            out = draw_kp(x, out)
+            out = draw_kp(final_shape[2:], out)
         else:
             out = prediction.sum(1)
 
-        out = norm_mask(x, out)
+        out = norm_mask(x.shape[2], out)
         return out
 
 
@@ -146,8 +146,8 @@ class FommKpDetector(nn.Module):
     Detecting a keypoints. Return keypoint position and jacobian near each keypoint.
     """
 
-    def __init__(self, block_expansion, num_kp, num_channels, max_features,
-                 num_blocks, temperature, estimate_jacobian=False, scale_factor=1,
+    def __init__(self, checkpoint_with_kp, block_expansion, num_kp, num_channels, max_features,
+                 num_blocks, temperature, kp_after_softmax, estimate_jacobian=False, scale_factor=1,
                  single_jacobian_map=False, pad=0):
         super(FommKpDetector, self).__init__()
 
@@ -171,6 +171,8 @@ class FommKpDetector(nn.Module):
         if self.scale_factor != 1:
             self.down = AntiAliasInterpolation2d(num_channels, self.scale_factor)
 
+        self.load_state_dict(checkpoint_with_kp['kp_detector'])
+
     def gaussian2kp(self, heatmap):
         """
         Extract the mean and from a heatmap
@@ -180,7 +182,6 @@ class FommKpDetector(nn.Module):
         grid = make_coordinate_grid(shape[2:], heatmap.type()).unsqueeze_(0).unsqueeze_(0)
         value = (heatmap * grid).sum(dim=(2, 3))
         kp = {'value': value}
-
         return kp
 
     def forward(self, x):

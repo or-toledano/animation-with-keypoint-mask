@@ -113,6 +113,13 @@ animate_params:
   # Format for visualization, note that results will be also stored in staked .png.
   format: '.mp4'
   # Normalization of diriving keypoints
+  normalization_params:
+    # Increase or decrease relative movement scale depending on the size of the object
+    adapt_movement_scale: False
+    # Apply only relative displacement of the keypoint
+    use_relative_movement: True
+    # Apply only relative change in jacobian
+    use_relative_jacobian: True
 
 # Visualization parameters
 visualizer_params:

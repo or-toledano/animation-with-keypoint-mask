@@ -69,7 +69,7 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
             driving_video = x['driving_video']
             source_frame = x['source_video'][:, :, 0, :, :]
 
-            kp_source = kp_detector(source_frame)
+            kp_source_pts = kp_detector(source_frame)
             kp_driving_initial = kp_detector(driving_video[:, :, 0])
 
             for frame_idx in range(driving_video.shape[2]):
@@ -77,17 +77,18 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
                 kp_driving = kp_detector(driving_frame)
 
                 if kp_after_softmax:
+                    kp_source = kp_source_pts
                     kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
                                            kp_driving_initial=kp_driving_initial,
                                            **animate_params['normalization_params'])
-                    kp_source = draw_kp(x, kp_source)
-                    kp_norm = draw_kp(x, kp_norm)
-                    kp_source = norm_mask(x, kp_source)
-                    kp_norm = norm_mask(x, kp_norm)
+                    kp_source = draw_kp([64, 64], kp_source)
+                    kp_norm = draw_kp([64, 64], kp_norm)
+                    kp_source = norm_mask(64, kp_source)
+                    kp_norm = norm_mask(64, kp_norm)
                     out = generator(source_frame, kp_source=kp_source, kp_driving=kp_norm)
-                    kp_norm_int = F.interpolate(kp_norm, size=x.shape[2:], mode='bilinear', align_corners=False)
-
-                    out['kp_norm_int'] = kp_norm_int
+                    kp_norm_int = F.interpolate(kp_norm, size=source_frame.shape[2:], mode='bilinear',
+                                                align_corners=False)
+                    out['kp_norm_int'] = kp_norm_int.repeat(1, 3, 1, 1)
                 else:
                     out = generator(source_frame, kp_source=kp_source, kp_driving=kp_driving)
 
