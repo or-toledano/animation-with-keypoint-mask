@@ -138,7 +138,6 @@ class KPDetector(nn.Module):
             out = prediction.sum(1)
 
         out = norm_mask(x, out)
-
         return out
 
 
