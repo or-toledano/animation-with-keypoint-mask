@@ -32,7 +32,6 @@ dataset_params:
 # Defines model architecture
 model_params:
   common_params:
-    kp_after_softmax: True
     # Number of keypoint
     num_kp: 10
     # Number of channels per image
@@ -42,7 +41,7 @@ model_params:
     scale_factor: 0.25
 
   kp_detector_params:
-    kp_after_softmax: False
+    kp_after_softmax: True
     # Softmax temperature for keypoint heatmaps
     temperature: 0.1
     # Number of features mutliplier

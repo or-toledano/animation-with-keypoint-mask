@@ -7,7 +7,7 @@ from modules.util import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, Hourgl
 class Generator(nn.Module):
     def __init__(self, num_channels, num_kp, block_expansion, max_features, num_down_blocks,
                  num_bottleneck_blocks, estimate_occlusion_map=False, dense_motion_params=None,
-                 estimate_jacobian=False, scale_factor=0.25, kp_after_softmax=False):
+                 estimate_jacobian=False, scale_factor=0.25):
         super(Generator, self).__init__()
         self.source_first = AntiAliasInterpolation2d(num_channels, scale_factor)
         self.first = SameBlock2d(num_channels + 2, 256, kernel_size=(7, 7), padding=(3, 3))

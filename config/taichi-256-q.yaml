@@ -41,6 +41,7 @@ model_params:
     scale_factor: 0.25
 
   kp_detector_params:
+    # Keypoints
     kp_after_softmax: False
     # Softmax temperature for keypoint heatmaps
     temperature: 0.1
