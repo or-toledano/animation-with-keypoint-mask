@@ -4,7 +4,7 @@ from modules.util import Hourglass, make_coordinate_grid, AntiAliasInterpolation
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-VERBOSE = True
+VERBOSE = False
 
 
 def vis(x, m):
