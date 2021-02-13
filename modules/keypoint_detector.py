@@ -85,7 +85,7 @@ class KPDetector(nn.Module):
 
     def __init__(self, checkpoint_with_kp, block_expansion, num_kp, kp_after_softmax, num_channels, max_features,
                  num_blocks, temperature, estimate_jacobian=False, scale_factor=1,
-                 single_jacobian_map=False, pad=0):
+                 single_jacobian_map=False, pad=0, softmax_mask=False):
         super(KPDetector, self).__init__()
 
         self.predictor = Hourglass(block_expansion, in_features=num_channels,
@@ -95,6 +95,7 @@ class KPDetector(nn.Module):
                             padding=pad)
 
         self.kp_after_softmax = kp_after_softmax
+        self.softmax_mask = softmax_mask
 
         if estimate_jacobian:
             self.num_jacobian_maps = 1 if single_jacobian_map else num_kp
@@ -130,9 +131,9 @@ class KPDetector(nn.Module):
 
         feature_map = self.predictor(x)
         prediction = self.kp(feature_map)
+        final_shape = prediction.shape
 
         if self.kp_after_softmax:
-            final_shape = prediction.shape
             heatmap = prediction.view(final_shape[0], final_shape[1], -1)
             heatmap = F.softmax(heatmap / self.temperature, dim=2)
             heatmap = heatmap.view(*final_shape)
@@ -140,6 +141,11 @@ class KPDetector(nn.Module):
             out = draw_kp(final_shape[2:], out)
         else:
             vis_10(prediction)
+            if self.softmax_mask:
+                prediction = prediction.view(final_shape[0], final_shape[1], -1)
+                prediction = F.softmax(prediction / self.temperature, dim=2)
+                prediction = prediction.view(*final_shape)
+                vis_10(prediction)
             out = prediction.sum(1)
         vis(x, out)
         out = norm_mask(x.shape[2], out)
