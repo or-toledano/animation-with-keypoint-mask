@@ -9,14 +9,17 @@ from shutil import copy
 from frames_dataset import FramesDataset
 
 from modules.generator import Generator
-from modules.keypoint_detector import KPDetector, FommKpDetector
+from modules.keypoint_detector import KPDetector, FommKpDetector, VERBOSE
 
 import torch
 from train import train
 from reconstruction import reconstruction
 from animate import animate
 
-matplotlib.use('Agg')
+if VERBOSE:
+    matplotlib.use('TkAgg')
+else:
+    matplotlib.use('Agg')
 
 if __name__ == '__main__':
 
