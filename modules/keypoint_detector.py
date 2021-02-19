@@ -71,7 +71,7 @@ def norm_mask(shape, mask):
     return out
 
 
-def draw_kp(shape, kp, kp_variance=0.003):
+def draw_kp(shape, kp, kp_variance=0.005):
     res = kp2gaussian(kp, shape, kp_variance)
     vis_10(res)
     res = res.sum(1)
