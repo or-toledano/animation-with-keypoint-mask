@@ -1,10 +1,10 @@
-name: venv
+name: venv11
 channels:
   - pytorch
   - conda-forge
 dependencies:
   - python=3.8
-  - cudatoolkit=10.1
+  - cudatoolkit=11
   - pytorch::pytorch==1.7.1
   - pytorch::torchvision==0.8.2
   - imageio==2.9.0
