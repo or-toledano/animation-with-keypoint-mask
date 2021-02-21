@@ -102,7 +102,7 @@ train_params:
   # than the loss will be computer on resolutions 256x256, 128x128, 64x64, 32x32.
   scales: [1, 0.5, 0.25, 0.125]
   # Save checkpoint this frequently. If checkpoint_freq=50, checkpoint will be saved every 50 epochs.
-  checkpoint_freq: 4
+  checkpoint_freq: 20
   # Parameters of transform for equivariance loss
   transform_params:
     # Sigma for affine part
