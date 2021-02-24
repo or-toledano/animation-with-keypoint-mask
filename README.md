@@ -1,8 +1,8 @@
 # animation-with-keypoint-mask
-```conda env create -f environment.yml```
-```conda activate venv11```
-Please obtain pretrained keypoint module. You can do so by
-```git checkout fomm```
+```conda env create -f environment.yml```\
+```conda activate venv11```\
+Please obtain pretrained keypoint module. You can do so by\
+```git checkout fomm```\
 Then, follow the instructions from the README of that branch.
 ### training
 
