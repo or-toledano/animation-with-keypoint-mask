@@ -1,8 +1,9 @@
 # animation-with-keypoint-mask
-Currently, a fork of First Order Motion Model 
-1. conda env create -f environment.yml
-2. conda activate venv11
-
+```conda env create -f environment.yml```
+```conda activate venv11```
+Please obtain pretrained keypoint module. You can do so by
+```git checkout fomm```
+Then, follow the instructions from the README of that branch.
 ### training
 
 to train a model on specific dataset run:
