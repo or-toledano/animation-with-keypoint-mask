@@ -27,6 +27,9 @@
 
 \begin{icmlauthorlist}
 \icmlauthor{Or Toledano}{tlv}
+\icmlauthor{Yanir Marmor}{tlv}
+\icmlauthor{Dov Gertz}{tlv}
+
 \end{icmlauthorlist}
 
 \icmlaffiliation{tlv}{Tel Aviv University}
@@ -94,10 +97,42 @@ prior in this project.
 \vskip -0.2in
 \end{figure}
 \section{Experiments}
+
+
 TODO Yanir/Dov
 \\
 TODO like fomm/yoav
 TODO video reconstructioncomparison like yoav/fomm
+
+\begin{tabular}{m{1.5cm}m{1.5cm}m{1.5cm}}
+\toprule
+ Source image & Driving\\
+\toprule
+ \includegraphics[width=1cm, height=1cm]{paper/images/source.JPG}& \includegraphics[width=1cm, height=1cm]{paper/images/driving1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/driving2.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/driving3.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/driving4.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/driving5.JPG}\\
+\midrule
+X2Face & \includegraphics[width=1cm, height=1cm]{paper/images/1_X2Face_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/1_X2Face_2.JPG} &
+\includegraphics[width=1cm, height=1cm]{paper/images/1_X2Face_3.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/1_X2Face_4.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/1_X2Face_5.JPG}\\
+Monkey-Net & \includegraphics[width=1cm, height=1cm]{paper/images/2_Monkey-Net_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/2_Monkey-Net_2.JPG} &
+\includegraphics[width=1cm, height=1cm]{paper/images/2_Monkey-Net_3.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/2_Monkey-Net_4.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/2_Monkey-Net_5.JPG}\\
+FOMM & \includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_2.JPG} &
+\includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_3.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_4.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_5.JPG}\\
+YOAV & \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_2.JPG} &
+\includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_3.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_4.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_5.JPG}\\
+\bottomrule
+\end{tabular}
+
+
+
+
 \subsection{Datasets}
 TODO
 \subsection{Comparison with Previous Works}
@@ -108,7 +143,7 @@ TODO Dov
 % above and below tabular lines.
 
 \begin{table}[t]
-\caption{Accuracy TODO Dov}
+\caption{Accuracy Metrics}
 \label{sample-table}
 \vskip 0.15in
 \begin{center}
@@ -116,18 +151,15 @@ TODO Dov
 \begin{sc}
 \begin{tabular}{lcccr}
 \toprule
-Data set & Naive & Flexible & Better? \\
+Method & AKD & AED & L1 \\
 \midrule
-Breast    & 95.9$\pm$ 0.2& 96.7$\pm$ 0.2& $\surd$ \\
-Cleveland & 83.3$\pm$ 0.6& 80.0$\pm$ 0.6& $\times$\\
-Glass2    & 61.9$\pm$ 1.4& 83.8$\pm$ 0.7& $\surd$ \\
-Credit    & 74.8$\pm$ 0.5& 78.3$\pm$ 0.6&         \\
-Horse     & 73.3$\pm$ 0.9& 69.7$\pm$ 1.0& $\times$\\
-TODO Yanir/Dov
-\\
-Meta      & 67.1$\pm$ 0.6& 76.5$\pm$ 0.5& $\surd$ \\
-Pima      & 75.1$\pm$ 0.6& 73.9$\pm$ 0.5&         \\
-Vehicle   & 44.9$\pm$ 0.6& 61.5$\pm$ 0.4& $\surd$ \\
+Monkey-Net    & 10.798 & 0.228 & 0.077 \\
+FOMM    & 6.872 & 0.167 & 0.063 \\
+Yoav & 4.239 & 0.147 & 0.047 \\
+Ours softmax & 14.760& 0.245 & $\times$ \\
+Ours & 5.551 & 0.141 &  0.045\\
+\midrule
+Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
 \bottomrule
 \end{tabular}
 \end{sc}
