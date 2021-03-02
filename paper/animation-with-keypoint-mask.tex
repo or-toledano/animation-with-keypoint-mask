@@ -97,13 +97,16 @@ prior in this project.
 \vskip -0.2in
 \end{figure}
 \section{Experiments}
+\subsection{Datasets}
+The training and evaluation were done using Tai-Chi-HD dataset which containing short videos of people doing tai-chi exercises. Following \cite{siarohin2020order}, 3,141 tai-chi videos were downloaded from YouTube. The videos were cropped and resized to a resolution of $256^2$, while preserving the aspect ratio. There are 3,016 training videos and 125 test videos.
 
-
-TODO Yanir/Dov
-\\
-TODO like fomm/yoav
-TODO video reconstructioncomparison like yoav/fomm
-
+\begin{table}[t]
+\caption{Images comparison}
+\label{table:images}
+\vskip 0.15in
+\begin{center}
+\begin{small}
+\begin{sc}
 \begin{tabular}{m{1.5cm}m{1.5cm}m{1.5cm}}
 \toprule
  Source image & Driving\\
@@ -123,20 +126,30 @@ FOMM & \includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_1.JPG} & \inc
 \includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_3.JPG}&
 \includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_4.JPG}&
 \includegraphics[width=1cm, height=1cm]{paper/images/3_FOMM_5.JPG}\\
-YOAV & \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_2.JPG} &
+Yoav's work & \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_2.JPG} &
 \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_3.JPG}&
 \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_4.JPG}&
 \includegraphics[width=1cm, height=1cm]{paper/images/4_YOAV_5.JPG}\\
+Ours & \includegraphics[width=1cm, height=1cm]{paper/images/5_OURS_1.JPG} & \includegraphics[width=1cm, height=1cm]{paper/images/5_OURS_2.JPG} &
+\includegraphics[width=1cm, height=1cm]{paper/images/5_OURS_3.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/5_OURS_4.JPG}&
+\includegraphics[width=1cm, height=1cm]{paper/images/5_OURS_5.JPG}\\
 \bottomrule
 \end{tabular}
+\end{sc}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
 
 
 
 
-\subsection{Datasets}
-TODO
 \subsection{Comparison with Previous Works}
-We can see:
+In order to compere our work to previous works(Table \ref{table:results}) we used metrics previously used in similar papers. Average Key-points Distance \cite{cao2017realtime} (AKD) measures the average key-points distance between the generated video and the source video. Average Euclidean Distance \cite{zheng2019joint}  (AED) measures the average euclidean distance
+ between the representations of the ground-truth and generated videos in some embedding space. In addition, we added the L1 distance as well. The AED and AKD metrics were calculated using the following github: https://github.com/AliaksandrSiarohin/pose-evaluation.
+
+
 \label{results}
 TODO Dov
 % Note use of \abovespace and \belowspace to get reasonable spacing
@@ -144,7 +157,7 @@ TODO Dov
 
 \begin{table}[t]
 \caption{Accuracy Metrics}
-\label{sample-table}
+\label{table:results}
 \vskip 0.15in
 \begin{center}
 \begin{small}
@@ -155,7 +168,7 @@ Method & AKD & AED & L1 \\
 \midrule
 Monkey-Net    & 10.798 & 0.228 & 0.077 \\
 FOMM    & 6.872 & 0.167 & 0.063 \\
-Yoav & 4.239 & 0.147 & 0.047 \\
+Yoav's work & 4.239 & 0.147 & 0.047 \\
 Ours softmax & 14.760& 0.245 & $\times$ \\
 Ours & 5.551 & 0.141 &  0.045\\
 \midrule
