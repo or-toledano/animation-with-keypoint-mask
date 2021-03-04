@@ -9,7 +9,7 @@
 # video id.
 dataset_params:
   # Path to data, data can be stored in several formats: .mp4 or .gif videos, stacked .png images or folders with frames.
-  root_dir: /home/dcor/datasets/taichi/
+  root_dir: /jupyter/data/
   # Image shape, needed for staked .png format.
   frame_shape: [256, 256, 3]
   # In case of TaiChi single video can be splitted in many chunks, or the maybe several videos for single person.
