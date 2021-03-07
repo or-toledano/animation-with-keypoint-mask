@@ -1,4 +1,4 @@
-name: venv11
+name: venvnewtorch
 channels:
   - pytorch
   - conda-forge

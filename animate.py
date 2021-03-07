@@ -1,15 +1,16 @@
 import os
 from tqdm import tqdm
+
 import torch
 from torch.utils.data import DataLoader
+
 from frames_dataset import PairedDataset
 from logger import Logger, Visualizer
 import imageio
 from scipy.spatial import ConvexHull
 import numpy as np
+
 from sync_batchnorm import DataParallelWithCallback
-from modules.keypoint_detector import draw_kp, norm_mask
-import torch.nn.functional as F
 
 
 def normalize_kp(kp_source, kp_driving, kp_driving_initial, adapt_movement_scale=False,
@@ -35,7 +36,7 @@ def normalize_kp(kp_source, kp_driving, kp_driving_initial, adapt_movement_scale
     return kp_new
 
 
-def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_after_softmax):
+def animate(config, generator, kp_detector, checkpoint, log_dir, dataset):
     log_dir = os.path.join(log_dir, 'animation')
     png_dir = os.path.join(log_dir, 'png')
     animate_params = config['animate_params']
@@ -69,34 +70,23 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
             driving_video = x['driving_video']
             source_frame = x['source_video'][:, :, 0, :, :]
 
-            kp_source_pts = kp_detector(source_frame)
+            kp_source = kp_detector(source_frame)
             kp_driving_initial = kp_detector(driving_video[:, :, 0])
 
             for frame_idx in range(driving_video.shape[2]):
                 driving_frame = driving_video[:, :, frame_idx]
                 kp_driving = kp_detector(driving_frame)
-
-                if kp_after_softmax:
-                    kp_source = kp_source_pts
-                    kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
-                                           kp_driving_initial=kp_driving_initial,
-                                           **animate_params['normalization_params'])
-                    kp_source = draw_kp([64, 64], kp_source)
-                    kp_norm = draw_kp([64, 64], kp_norm)
-                    kp_source = norm_mask(64, kp_source)
-                    kp_norm = norm_mask(64, kp_norm)
-                    out = generator(source_frame, kp_source=kp_source, kp_driving=kp_norm)
-                    kp_norm_int = F.interpolate(kp_norm, size=source_frame.shape[2:], mode='bilinear',
-                                                align_corners=False)
-                    out['kp_norm_int'] = kp_norm_int.repeat(1, 3, 1, 1)
-                else:
-                    out = generator(source_frame, kp_source=kp_source, kp_driving=kp_driving)
+                kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
+                                       kp_driving_initial=kp_driving_initial, **animate_params['normalization_params'])
+                out = generator(source_frame, kp_source=kp_source, kp_driving=kp_norm)
 
                 out['kp_driving'] = kp_driving
                 out['kp_source'] = kp_source
+                out['kp_norm'] = kp_norm
 
-                predictions.append(np.transpose(out['low_res_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
-                predictions.append(np.transpose(out['upscaled_prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
+                del out['sparse_deformed']
+
+                predictions.append(np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0])
 
                 visualization = Visualizer(**config['visualizer_params']).visualize(source=source_frame,
                                                                                     driving=driving_frame, out=out)
