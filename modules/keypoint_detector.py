@@ -146,7 +146,7 @@ class KPDetector(nn.Module):
                 prediction = F.softmax(prediction / self.temperature, dim=2)
                 prediction = prediction.view(*final_shape)
                 vis_10(prediction)
-            out = prediction.sum(1)
+            out = torch.cat(prediction, 1) # TODO
         vis(x, out)
         out = norm_mask(x.shape[2], out)
 
