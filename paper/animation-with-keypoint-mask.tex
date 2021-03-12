@@ -54,6 +54,26 @@ realtime
 
 \section{Introduction}
 TODO Or
+Image animation is a task of synthesizing future video frames of a single source image by the motion from another video, the driving video. This task is challenging due to the complexity of motion representation and the unknown relations between the driving video and the source image. 
+Despite its difficulty, this
+task has attracted great interests in machine learning at the last years, as  is fundamental to
+understanding the motion at the physical world.
+
+Content that created in that task, known also as "deepfake". The word*\textit{deepfake} is a combination of the words "deep learning" and "fake" and regards genrally to "an image or recording that has been convincingly altered and manipulated to misrepresent someone as doing or saying something that was not actually done or said" (merriam-webster, "deepfake").
+
+Although usually, this technology involve the generation and manipulation of human imagery, it's not necessary. 
+
+% add some words about good and evil use in this technique
+
+\cite{10.1145/3425780} in their survey about Creation and Detection of Deepfakes split this area into four categories of tasks:
+reenactment, replacement, editing,
+and synthesis. 
+
+our project focus involved at the "replacement" category.
+
+The main challenges we need to deal with, as they defined in that survey are: paired training, identity leakage, occlusions and temporal coherence,
+
+
 
 Our paper focuses on the motion transfer problem: given a source image $S$
 and a driving video $D$, the goal is to syntesize a video with the identity
@@ -62,6 +82,8 @@ Some notable works \cite{siarohin2020order}, \cite{wiles2018x2face},
 \cite{siarohin2019animating}.
 
 Our method does not rely on GANs - see Section~\ref{method}.
+
+our contribution it twofold: first, ignore the motion prior and better accuracy results, and second compact representation with better performance.
 
 \medskip
 
@@ -79,6 +101,14 @@ which can be used in the context
 of relative motion transfer during animation, as in
 \cite{siarohin2020order}, which isn't possible with a mask.
 
+\subsection{Keypoints}
+In contrast to pixel-based approaches that were prevalent until a few years ago. Recently, keypoints-based approaches have been perceived as having the potential to achieve high performance in the field of video prediction. (relevant cites for that: \cite{kim2019unsupervised}, \cite{balakrishnan2018synthesizing} \cite{ma2017pose}  \cite{reed2017parallel} \cite{chan2019everybody} \cite{villegas2017learning}
+\cite{cai2018deep}
+\cite{wang2018every}
+\cite{reed2015deep}
+
+
+ However, these works require frame-by-frame keypoints labeling, which limits the applicability of the methods. There are several of solutions for this problem. Basically, we need to use a pre-trained keypoints detector for our model. (relevant cites for that: )
 \section{Methodology}
 Methods
 methods
