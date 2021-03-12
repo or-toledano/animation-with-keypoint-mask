@@ -45,29 +45,33 @@
 %\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
 
 \begin{abstract}
-TODO OR
-important
-transgaga structure
-realtime
+Image animation is a task of synthesizing future video frames of a single
+source image by the motion from another video, the driving video.
+This task is challenging due to the complexity of motion representation
+and the unknown relations between the driving video and the source image.
+Despite its difficulty, this task has attracted great interests in
+machine learning at the recent years, with gradual improvements. The
+problem can be thought as decoupling of motion and appearance, which is
+often solved by extracting the motion from keypoint movement. In this work,
+we extract the structure by a keypoint heatmap map, without an explicit
+motion representation. Then, the structures from the image and the video
+are extracted to warp the image according to the video, by a deep
+generator. Our approach outperforms the state of the art in popular
+reconstruction benchmarks, and an improvement can be easily observed in
+animating videos.
 \cite{siarohin2020order}
 \end{abstract}
 
 \section{Introduction}
-TODO Or
-Image animation is a task of synthesizing future video frames of a single source image by the motion from another video, the driving video. This task is challenging due to the complexity of motion representation and the unknown relations between the driving video and the source image. 
-Despite its difficulty, this
-task has attracted great interests in machine learning at the last years, as  is fundamental to
-understanding the motion at the physical world.
-
 Content that created in that task, known also as "deepfake". The word*\textit{deepfake} is a combination of the words "deep learning" and "fake" and regards genrally to "an image or recording that has been convincingly altered and manipulated to misrepresent someone as doing or saying something that was not actually done or said" (merriam-webster, "deepfake").
 
-Although usually, this technology involve the generation and manipulation of human imagery, it's not necessary. 
+Although usually, this technology involve the generation and manipulation of human imagery, it's not necessary.
 
 % add some words about good and evil use in this technique
 
 \cite{10.1145/3425780} in their survey about Creation and Detection of Deepfakes split this area into four categories of tasks:
 reenactment, replacement, editing,
-and synthesis. 
+and synthesis.
 
 our project focus involved at the "replacement" category.
 
@@ -138,7 +142,7 @@ The training and evaluation were done using Tai-Chi-HD dataset which containing 
 \begin{center}
 \begin{small}
 \begin{sc}
-\begin{tabular}{m{1cm}m{1cm}m{1cm}m{1cm}m{1cm}m{1cm}}
+\begin{tabular}{m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}}
 \toprule
 Source image & Driving\\
 \toprule
@@ -164,7 +168,7 @@ FOMM & \includegraphics[width=1cm, height=1cm]{images/3_FOMM_1.JPG} &
 \includegraphics[width=1cm, height=1cm]{images/3_FOMM_3.JPG} &
 \includegraphics[width=1cm, height=1cm]{images/3_FOMM_4.JPG} &
 \includegraphics[width=1cm, height=1cm]{images/3_FOMM_5.JPG} \\
-Perturbed mask & \includegraphics[width=1cm, height=1cm]{images/4_YOAV_1.JPG} &
+Perturbed Mask & \includegraphics[width=1cm, height=1cm]{images/4_YOAV_1.JPG} &
 \includegraphics[width=1cm, height=1cm]{images/4_YOAV_2.JPG} &
 \includegraphics[width=1cm, height=1cm]{images/4_YOAV_3.JPG} &
 \includegraphics[width=1cm, height=1cm]{images/4_YOAV_4.JPG} &
@@ -191,7 +195,6 @@ In order to compere our work to previous works(Table~\ref{table:results}) we use
 
 
 \label{results}
-TODO Dov
 % Note use of \abovespace and \belowspace to get reasonable spacing
 % above and below tabular lines.
 
@@ -208,7 +211,7 @@ Method & AKD & AED & L1 \\
 \midrule
 Monkey-Net    & 10.798 & 0.228 & 0.077 \\
 FOMM    & 6.872 & 0.167 & 0.063 \\
-Yoav's work & 4.239 & 0.147 & 0.047 \\
+Perturbed Mask & 4.239 & 0.147 & 0.047 \\
 Ours softmax & 14.760& 0.245 & 0.077 \\
 Ours & 5.551 & 0.141 &  0.045\\
 \midrule
@@ -220,6 +223,18 @@ Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
 \end{center}
 \vskip -0.1in
 \end{table}
+\section{Conclusions}
+We constructed a novel method for image animation by moving the need for
+a strong motion prior (optical flow) to the assumption of a pre-trained
+keypoint detector/ keypoint heatmaps prior to activation.
+By doing so, we encapsulated motion to a motion mask, which is
+bottlenecked by the prior training which has the keypoint bottleneck.
+The motion masks are then fed into a generator, which combines the
+appearance of the source image and the mask which represents the structure,
+decoupled from any appearance naturally by the assumption that during the
+training of the keypoint detector, the heatmap mask went into a keypoint
+bottleneck. After evaluation, we can conclude that our method is
+competitive with the state of the art, and outperformes them in many cases.
 \section*{Software and Data}
 Detailed in our repository:
 \\
