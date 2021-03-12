@@ -10,7 +10,8 @@ class Generator(nn.Module):
                  estimate_jacobian=False, scale_factor=0.25):
         super(Generator, self).__init__()
         self.source_first = AntiAliasInterpolation2d(num_channels, scale_factor)
-        self.first = SameBlock2d(num_channels + 2, 256, kernel_size=(7, 7), padding=(3, 3))
+        first_input = int(block_expansion / scale_factor)
+        self.first = SameBlock2d(num_channels + 2, first_input, kernel_size=(7, 7), padding=(3, 3))  # +2 masks
         down_blocks = []
         for i in range(num_down_blocks):
             in_features = min(max_features, block_expansion * (2 ** i))

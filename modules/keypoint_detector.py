@@ -4,13 +4,13 @@ from modules.util import Hourglass, make_coordinate_grid, AntiAliasInterpolation
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-VERBOSE = False
+VERBOSE = False  # To be used with bs=1 !
 
 
 def vis(x, m):
     if VERBOSE:
-        viz = m.permute(1, 2, 0)
-        viz = viz.detach()
+        viz = m.detach()
+        viz = viz.permute(1, 2, 0)
         fig = plt.figure()
         fig.add_subplot(1, 2, 1)
         plt.imshow(x.permute(2, 3, 1, 0).squeeze())
@@ -21,8 +21,8 @@ def vis(x, m):
 
 def vis_10(m):
     if VERBOSE:
-        viz = m.permute(1, 2, 3, 0)
-        viz = viz.detach()
+        viz = m.detach()
+        viz = viz.permute(1, 2, 3, 0)
         fig = plt.figure()
 
         for i in range(1, 11):

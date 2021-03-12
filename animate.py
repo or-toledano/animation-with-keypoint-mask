@@ -39,7 +39,8 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
     log_dir = os.path.join(log_dir, 'animation')
     png_dir = os.path.join(log_dir, 'png')
     animate_params = config['animate_params']
-
+    frame_size = config['dataset_params']['frame_shape'][0]
+    latent_size = int(config['model_params']['common_params']['scale_factor'] * frame_size)
     dataset = PairedDataset(initial_dataset=dataset, number_of_pairs=animate_params['num_pairs'])
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1)
 
@@ -81,10 +82,10 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
                     kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
                                            kp_driving_initial=kp_driving_initial,
                                            **animate_params['normalization_params'])
-                    kp_source = draw_kp([64, 64], kp_source)
-                    kp_norm = draw_kp([64, 64], kp_norm)
-                    kp_source = norm_mask(64, kp_source)
-                    kp_norm = norm_mask(64, kp_norm)
+                    kp_source = draw_kp([latent_size, latent_size], kp_source)
+                    kp_norm = draw_kp([latent_size, latent_size], kp_norm)
+                    kp_source = norm_mask(latent_size, kp_source)
+                    kp_norm = norm_mask(latent_size, kp_norm)
                     out = generator(source_frame, kp_source=kp_source, kp_driving=kp_norm)
                     kp_norm_int = F.interpolate(kp_norm, size=source_frame.shape[2:], mode='bilinear',
                                                 align_corners=False)
