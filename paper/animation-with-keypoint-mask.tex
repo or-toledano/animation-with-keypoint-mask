@@ -36,6 +36,9 @@
 \icmlaffiliation{tlv}{Tel Aviv University}
 
 \icmlcorrespondingauthor{Or Toledano}{ortoledano@protonmail.com}
+\icmlcorrespondingauthor{Yanir Marmor}{TODO}
+\icmlcorrespondingauthor{Or Toledano}{TODO}
+
 
 \icmlkeywords{Machine Learning, ICML}
 
@@ -45,15 +48,15 @@
 %\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
 
 \begin{abstract}
-Image animation is a task of synthesizing future video frames of a single
-source image by the motion from another video, the driving video.
+Image animation is the task of synthesizing future video frames of a single
+source image according to the motion from a driving video.
 This task is challenging due to the complexity of motion representation
 and the unknown relations between the driving video and the source image.
-Despite its difficulty, this task has attracted great interests in
-machine learning at the recent years, with gradual improvements. The
+Despite this difficulty, this problem attracted great interests from
+researches at the recent years, with gradual improvements. The
 problem can be thought as decoupling of motion and appearance, which is
 often solved by extracting the motion from keypoint movement. In this work,
-we extract the structure by a keypoint heatmap map, without an explicit
+we extract the structure by a keypoint heatmap, without an explicit
 motion representation. Then, the structures from the image and the video
 are extracted to warp the image according to the video, by a deep
 generator. Our approach outperforms the state of the art in popular
@@ -63,9 +66,8 @@ animating videos.
 \end{abstract}
 
 \section{Introduction}
-Content that created in that task, known also as "deepfake". The word*\textit{deepfake} is a combination of the words "deep learning" and "fake" and regards genrally to "an image or recording that has been convincingly altered and manipulated to misrepresent someone as doing or saying something that was not actually done or said" (merriam-webster, "deepfake").
-
-Although usually, this technology involve the generation and manipulation of human imagery, it's not necessary.
+% TODO: do we need this?
+% Content that created in that task, known also as "deepfake". The word*\textit{deepfake} is a combination of the words "deep learning" and "fake" and regards genrally to "an image or recording that has been convincingly altered and manipulated to misrepresent someone as doing or saying something that was not actually done or said" (merriam-webster, "deepfake"). Although usually, this technology involve the generation and manipulation of human imagery, it's not necessary.
 
 % add some words about good and evil use in this technique
 
@@ -73,7 +75,10 @@ Although usually, this technology involve the generation and manipulation of hum
 reenactment, replacement, editing,
 and synthesis.
 
+
 our project focus involved at the "replacement" category.
+
+TODO: didn't you mean synthesis?
 
 The main challenges we need to deal with, as they defined in that survey are: paired training, identity leakage, occlusions and temporal coherence,
 
@@ -99,25 +104,39 @@ of image-to-image translation, in works such as TransGaGa \cite{wu2019transgaga}
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
 by basing the mask off a motion related module, which saves us the hassle
-of perturbing the input hoping to achieve an identy-less mask. By doing so,
-we improve their results, and purposes an additional "circles" only mask
-which can be used in the context
-of relative motion transfer during animation, as in
-\cite{siarohin2020order}, which isn't possible with a mask.
+of perturbing the input hoping to achieve an identy-less mask. That way, we
+can base more of the motion representation on the deep network, reduce our
+prior, and leave some space for our network to achieve better results.
+
 
 \subsection{Keypoints}
-In contrast to pixel-based approaches that were prevalent until a few years ago. Recently, keypoints-based approaches have been perceived as having the potential to achieve high performance in the field of video prediction. (relevant cites for that: \cite{kim2019unsupervised}, \cite{balakrishnan2018synthesizing} \cite{ma2017pose}  \cite{reed2017parallel} \cite{chan2019everybody} \cite{villegas2017learning}
+In contrast to pixel-based approaches that were prevalent until a few years ago.
+Recently, keypoint-based approaches have been perceived as having the
+potential to achieve high performance in the field of video prediction.
+\cite{kim2019unsupervised}, \cite{balakrishnan2018synthesizing}
+\cite{ma2017pose}  \cite{reed2017parallel} \cite{chan2019everybody}
+\cite{villegas2017learning}
 \cite{cai2018deep}
 \cite{wang2018every}
 \cite{reed2015deep}
 
-
  However, these works require frame-by-frame keypoints labeling, which limits the applicability of the methods. There are several of solutions for this problem. Basically, we need to use a pre-trained keypoints detector for our model. (relevant cites for that: )
 \section{Methodology}
-Methods
-methods
-methods
 \label{method}
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{second_meeting_pres}}
+\caption{
+Architexture
+}
+\label{arch}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
@@ -131,6 +150,64 @@ prior in this project.
 \end{center}
 \vskip -0.2in
 \end{figure}
+
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{mask_sum}}
+\caption{
+The sum of the $K$ channels which is fed as a structural mask into the
+generator.
+}
+\label{mask-sum}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+
+\subsection{Losses}
+Perceptual Vgg19
+\subsection{Version for relative motion transfer}
+We purposes an additional "circles" only mask
+which can be used in the context
+of relative motion transfer during animation, as in
+\cite{siarohin2020order}, which isn't possible with a mask.
+The masks catches the geometry representation \cite{wu2019transgaga} of the
+image, and by forcing it to be described as keypoints with a center, we can
+use the relative coordinates for the animation. However, this module didn't
+perform as well as our heatmap mask module (~\label{table:results}).
+Relative motion transfer isn't always the wanted outcome, but this work
+indicates that a keypoint-only-prior based module is feasible for the task.
+
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{softmax_10kp}}
+\caption{
+$K$ channels of the keypoint detector network used in
+\cite{siarohin2020order}, after the softmax activation and gaussian fit.
+}
+\label{softmax-10kp}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{softmax_sumkp}}
+\caption{
+The sum of the $K$ channels which is fed as a structural mask into the
+generator.
+}
+\label{softmax-sum}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
 \section{Experiments}
 \subsection{Datasets}
 The training and evaluation were done using Tai-Chi-HD dataset which containing short videos of people doing tai-chi exercises. Following \cite{siarohin2020order}, 3,141 tai-chi videos were downloaded from YouTube. The videos were cropped and resized to a resolution of $256^2$, while preserving the aspect ratio. There are 3,016 training videos and 125 test videos.
@@ -142,7 +219,7 @@ The training and evaluation were done using Tai-Chi-HD dataset which containing 
 \begin{center}
 \begin{small}
 \begin{sc}
-\begin{tabular}{m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}}
+\begin{tabular}{m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}}
 \toprule
 Source image & Driving\\
 \toprule
@@ -194,7 +271,6 @@ In order to compere our work to previous works(Table~\ref{table:results}) we use
  between the representations of the ground-truth and generated videos in some embedding space. In addition, we added the L1 distance as well. The AED and AKD metrics were calculated using the following github: https://github.com/AliaksandrSiarohin/pose-evaluation.
 
 
-\label{results}
 % Note use of \abovespace and \belowspace to get reasonable spacing
 % above and below tabular lines.
 
@@ -223,6 +299,13 @@ Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
 \end{center}
 \vskip -0.1in
 \end{table}
+\section{Future work}
+Test more datasets
+Remove the explicit sum of channels, maybe something deep in the features
+extracted in the keypoint detector
+Maybe feed all 10 channel masks into the generator
+Increase number of keypoints (probably won't because of memory)
+
 \section{Conclusions}
 We constructed a novel method for image animation by moving the need for
 a strong motion prior (optical flow) to the assumption of a pre-trained
