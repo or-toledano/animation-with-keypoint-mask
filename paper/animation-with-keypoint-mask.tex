@@ -36,8 +36,8 @@
 \icmlaffiliation{tlv}{Tel Aviv University}
 
 \icmlcorrespondingauthor{Or Toledano}{ortoledano@protonmail.com}
-\icmlcorrespondingauthor{Yanir Marmor}{TODO}
-\icmlcorrespondingauthor{Or Toledano}{TODO}
+\icmlcorrespondingauthor{Yanir Marmor}{yanirmr@gmail.com}
+\icmlcorrespondingauthor{Dov Gertz}{TODO}
 
 
 \icmlkeywords{Machine Learning, ICML}
@@ -62,12 +62,10 @@ are extracted to warp the image according to the video, by a deep
 generator. Our approach outperforms the state of the art in popular
 reconstruction benchmarks, and an improvement can be easily observed in
 animating videos.
-\cite{siarohin2020order}
+\cite{siarohin2020order} % @Or - why this citation is here?
 \end{abstract}
 
 \section{Introduction}
-% TODO: do we need this?
-% Content that created in that task, known also as "deepfake". The word*\textit{deepfake} is a combination of the words "deep learning" and "fake" and regards genrally to "an image or recording that has been convincingly altered and manipulated to misrepresent someone as doing or saying something that was not actually done or said" (merriam-webster, "deepfake"). Although usually, this technology involve the generation and manipulation of human imagery, it's not necessary.
 
 % add some words about good and evil use in this technique
 
@@ -120,7 +118,7 @@ potential to achieve high performance in the field of video prediction.
 \cite{wang2018every}
 \cite{reed2015deep}
 
- However, these works require frame-by-frame keypoints labeling, which limits the applicability of the methods. There are several of solutions for this problem. Basically, we need to use a pre-trained keypoints detector for our model. (relevant cites for that: )
+ However, these works require frame-by-frame keypoints labeling, which limits the applicability of the methods. There are several of solutions for this problem. Basically, we need to use a pre-trained keypoints detector for our model. (relevant cites for that: \cite{siarohin2019animating} \cite{thewlis2017unsupervised} \cite{zhang2018unsupervised} \cite{jakab2018unsupervised} \cite{newell2016stacked})
 \section{Methodology}
 \label{method}
 
@@ -129,7 +127,7 @@ potential to achieve high performance in the field of video prediction.
 \begin{center}
 \centerline{\includegraphics[width=\columnwidth]{second_meeting_pres}}
 \caption{
-Architexture
+Architecture
 }
 \label{arch}
 \end{center}
@@ -187,7 +185,7 @@ indicates that a keypoint-only-prior based module is feasible for the task.
 \centerline{\includegraphics[width=\columnwidth]{softmax_10kp}}
 \caption{
 $K$ channels of the keypoint detector network used in
-\cite{siarohin2020order}, after the softmax activation and gaussian fit.
+\cite{siarohin2020order}, after the softmax activation and Gaussian fit.
 }
 \label{softmax-10kp}
 \end{center}
