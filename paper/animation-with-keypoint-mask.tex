@@ -105,6 +105,9 @@ by basing the mask off a motion related module, which saves us the hassle
 of perturbing the input hoping to achieve an identy-less mask. That way, we
 can base more of the motion representation on the deep network, reduce our
 prior, and leave some space for our network to achieve better results.
+However small our prior is, we still have a narrower bottleneck
+compared to \cite{wiles2018x2face} by forcing a mask, which enables our
+network to generalize better.
 
 
 \subsection{Keypoints}
