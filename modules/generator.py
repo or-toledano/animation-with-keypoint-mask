@@ -33,7 +33,7 @@ class Generator(nn.Module):
 
         self.final = nn.Conv2d(block_expansion, num_channels, kernel_size=(7, 7), padding=(3, 3))
         self.num_channels = num_channels
-        self.hourglass = Hourglass(block_expansion=64, in_features=8, max_features=1024, num_blocks=5)
+        self.hourglass = Hourglass(block_expansion=block_expansion, in_features=8, max_features=1024, num_blocks=5)
         self.final_hourglass = nn.Conv2d(in_channels=self.hourglass.out_filters, out_channels=3, kernel_size=(7, 7),
                                          padding=(3, 3))
 
