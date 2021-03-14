@@ -148,12 +148,27 @@ Our architecture follows \cite{siarohin2019animating} without the dense
 motion module, after changing its keypoint generation module to return our
 mask. After the mask is obtained, we follow the encoder decoder approach as
 \cite{shalev2020image}.
-Namely, we use an encoder (decoder) with five encoding (decoding) blocks,
+Namely, the encoder of the low resolution generator consists of $\textit{conv}_{7
+\times 7}$, $\textit{batch\_norm}$, $\textit{relu}$, followed by six
+residual blocks of $\textit{batch\_norm}$, $\textit{relu}$,
+$\textit{conv}_{3 \times 3}$ ,$\textit{batch\_norm}$, $\textit{relu}$,
+$\textit{conv}_{3 \times 3}$, (and a sum with the source).
+The residual blocks help to maintain the indentity of the source image
+\cite{he2015deep}.
+The decoder consists of two blocks, each is a sequence of
+$\textit{up\_sample}_{2 \times 2 }$, $\textit{batch\_norm}$,
+$\textit{relu}$. The decoder is followed by a $\textit{conv}_{7 \times 7}$
+and a $\textit{sigmoid}$ activation.
+For the high resolution generator, use an encoder (decoder) with five encoding (decoding) blocks,
 where each block is a sequence of
-$\textit{conv}_{3 \times 3}$,   $\textit{relu}$, $\textit{batch\_norm}$,
+$\textit{conv}_{3 \times 3}$, $\textit{batch\_norm}$, $\textit{relu}$
 $\textit{avg\_pool}_{2 \times 2}$, and each decoding block is a sequence of
 $\textit{up\_sample}_{2 \times 2}$, $\textit{conv}_{3 \times 3}$,
 $\textit{batch\_norm}$, $\textit{relu}$.
+We add skip connections from each of the encoding layers to its
+corresponding encoding layer, to form a U-Net architecture
+\cite{ronneberger2015unet}.
+
 TODO
 
 
