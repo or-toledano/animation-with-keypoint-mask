@@ -44,8 +44,7 @@
 
 \vskip 0.3in
 ]
-\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
-%\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+\printAffiliationsAndNotice{}
 
 \begin{abstract}
 Image animation is the task of synthesizing future video frames of a single
@@ -56,13 +55,14 @@ Despite this difficulty, this problem attracted great interests from
 researches at the recent years, with gradual improvements. The
 problem can be thought as decoupling of motion and appearance, which is
 often solved by extracting the motion from keypoint movement. In this work,
-we extract the structure by a keypoint heatmap, without an explicit
+we extract the structure from a keypoint heatmap, without an explicit
 motion representation. Then, the structures from the image and the video
 are extracted to warp the image according to the video, by a deep
 generator. Our approach outperforms the state of the art in popular
 reconstruction benchmarks, and an improvement can be easily observed in
-animating videos.
-\cite{siarohin2020order} % @Or - why this citation is here?
+animating videos. It is generic, unsupervised and can be applied to
+animation of any arbitrary object, without any domain specific model for the
+structure of the input.
 \end{abstract}
 
 \section{Introduction}
@@ -81,7 +81,6 @@ TODO: didn't you mean synthesis?
 The main challenges we need to deal with, as they defined in that survey are: paired training, identity leakage, occlusions and temporal coherence,
 
 
-
 Our paper focuses on the motion transfer problem: given a source image $S$
 and a driving video $D$, the goal is to syntesize a video with the identity
 of $S$, and the motion from $D$.
@@ -90,7 +89,8 @@ Some notable works \cite{siarohin2020order}, \cite{wiles2018x2face},
 
 Our method does not rely on GANs - see Section~\ref{method}.
 
-our contribution it twofold: first, ignore the motion prior and better accuracy results, and second compact representation with better performance.
+our contribution it twofold: first, show that reducing the motion prior can
+work and yield better accuracy results, and second compact representation with better performance.
 
 \medskip
 
@@ -102,27 +102,33 @@ of image-to-image translation, in works such as TransGaGa \cite{wu2019transgaga}
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
 by basing the mask off a motion related module, which saves us the hassle
-of perturbing the input hoping to achieve an identy-less mask. That way, we
+of perturbing the input hoping to achieve an identy-less mask which might
+not even be optimal. That way, we
 can base more of the motion representation on the deep network, reduce our
 prior, and leave some space for our network to achieve better results.
-However small our prior is, we still have a narrower bottleneck
-compared to \cite{wiles2018x2face} by forcing a mask, which enables our
-network to generalize better.
 
 
 \subsection{Keypoints}
-In contrast to pixel-based approaches that were prevalent until a few years ago.
-Recently, keypoint-based approaches have been perceived as having the
+In contrast to pixel-based approaches that were prevalent until a few years
+ago, recently, keypoint-based approaches have been perceived as having the
 potential to achieve high performance in the field of video prediction.
 \cite{kim2019unsupervised}, \cite{balakrishnan2018synthesizing}
 \cite{ma2017pose}  \cite{reed2017parallel} \cite{chan2019everybody}
 \cite{villegas2017learning}
 \cite{cai2018deep}
 \cite{wang2018every}
-\cite{reed2015deep}
+\cite{reed2015deep}.
 
- However, these works require frame-by-frame keypoints labeling, which limits the applicability of the methods. There are several of solutions for this problem. Basically, we need to use a pre-trained keypoints detector for our model. (relevant cites for that: \cite{siarohin2019animating} \cite{thewlis2017unsupervised} \cite{zhang2018unsupervised} \cite{jakab2018unsupervised} \cite{newell2016stacked})
+However, these works require frame-by-frame keypoints labeling,
+which limits the applicability of the methods.
+There are several of solutions for this problem.
+Basically, we need to use a pre-trained keypoints detector for our model.
+\cite{siarohin2019animating} \cite{thewlis2017unsupervised}
+\cite{zhang2018unsupervised} \cite{jakab2018unsupervised}
+\cite{newell2016stacked}
+
 \section{Methodology}
+\subsection{Architecture}
 \label{method}
 
 \begin{figure}[ht]
@@ -130,12 +136,20 @@ potential to achieve high performance in the field of video prediction.
 \begin{center}
 \centerline{\includegraphics[width=\columnwidth]{second_meeting_pres}}
 \caption{
-Architecture
+Architecture (TODO: someone create a real graphic out of this)
 }
 \label{arch}
 \end{center}
 \vskip -0.2in
 \end{figure}
+
+Our architecture follows \cite{siarohin2019animating} without the dense
+motion module, after changing its keypoint generation module to return our
+mask. After the mask is obtained, we follow the encoder decoder approach as
+\cite{shalev2020image}.
+Namely, we use an encoder (decoder) with five encoding (decoding) blocks,
+where each block is a sequence of $\textbf{conv}$.
+TODO
 
 
 \begin{figure}[ht]
@@ -169,6 +183,7 @@ generator.
 
 \subsection{Losses}
 Perceptual Vgg19 \cite{simonyan2015deep}
+TODO
 \subsection{Version for relative motion transfer}
 We purposes an additional "circles" only mask
 which can be used in the context
@@ -177,7 +192,7 @@ of relative motion transfer during animation, as in
 The masks catches the geometry representation \cite{wu2019transgaga} of the
 image, and by forcing it to be described as keypoints with a center, we can
 use the relative coordinates for the animation. However, this module didn't
-perform as well as our heatmap mask module (~\label{table:results}).
+perform as well as our heatmap mask module (~\ref{table:results}).
 Relative motion transfer isn't always the wanted outcome, but this work
 indicates that a keypoint-only-prior based module is feasible for the task.
 
