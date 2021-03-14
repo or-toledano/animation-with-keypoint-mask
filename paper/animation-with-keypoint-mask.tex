@@ -1,5 +1,6 @@
 \documentclass{article}
-
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage{subfigure}
@@ -148,7 +149,11 @@ motion module, after changing its keypoint generation module to return our
 mask. After the mask is obtained, we follow the encoder decoder approach as
 \cite{shalev2020image}.
 Namely, we use an encoder (decoder) with five encoding (decoding) blocks,
-where each block is a sequence of $\textbf{conv}$.
+where each block is a sequence of
+$\textit{conv}_{3 \times 3}$,   $\textit{relu}$, $\textit{batch\_norm}$,
+$\textit{avg\_pool}_{2 \times 2}$, and each decoding block is a sequence of
+$\textit{up\_sample}_{2 \times 2}$, $\textit{conv}_{3 \times 3}$,
+$\textit{batch\_norm}$, $\textit{relu}$.
 TODO
 
 
