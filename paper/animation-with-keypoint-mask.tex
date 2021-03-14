@@ -83,7 +83,7 @@ The main challenges we need to deal with, as they defined in that survey are: pa
 
 
 Our paper focuses on the motion transfer problem: given a source image $S$
-and a driving video $D$, the goal is to syntesize a video with the identity
+and a driving video $D$, the goal is to synthesize a video with the identity
 of $S$, and the motion from $D$.
 Some notable works \cite{siarohin2020order}, \cite{wiles2018x2face},
 \cite{siarohin2019animating}.
@@ -98,12 +98,12 @@ work and yield better accuracy results, and second compact representation with b
 \textbf{Related Work:} Our work doesn't rely directly on a strong motion prior,
 but uses a structure mask which was extracted from a keypoint detector
 of a motion based model, such as \cite{siarohin2020order}. The concept of using drawn keypoints as
-a geometry represantation (structural mask) was already used in the context
+a geometry representation (structural mask) was already used in the context
 of image-to-image translation, in works such as TransGaGa \cite{wu2019transgaga}.
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
 by basing the mask off a motion related module, which saves us the hassle
-of perturbing the input hoping to achieve an identy-less mask which might
+of perturbing the input hoping to achieve an identity-less mask which might
 not even be optimal. That way, we
 can base more of the motion representation on the deep network, reduce our
 prior, and leave some space for our network to achieve better results.
@@ -129,6 +129,17 @@ Basically, we need to use a pre-trained keypoints detector for our model.
 \cite{newell2016stacked}
 
 \section{Methodology}
+The network can be split to to parts: obtaining the mask, and generating
+the synthesized frame. The generator architecture is constant amongst all of
+our variations, and can be described as low resolution generation from the
+source image, source mask and driving mask; Followed by upscaling of the
+low scale synthesized prediction by passing it with the source frame to a
+high resolution generator.
+We created two different versions for the mask generator, and chose to show
+results for the first, absolute one, due to significant performance. The
+performance drop for our second, relative version was expected because the
+mask contained less structural information.
+
 \subsection{Architecture}
 \label{method}
 
@@ -144,7 +155,7 @@ Architecture (TODO: someone create a real graphic out of this)
 \vskip -0.2in
 \end{figure}
 
-Our architecture follows \cite{siarohin2019animating} without the dense
+Our architecture follows \cite{siarohin2020animating} without the dense
 motion module, after changing its keypoint generation module to return our
 mask. After the mask is obtained, we follow the encoder decoder approach as
 \cite{shalev2020image}.
@@ -153,7 +164,7 @@ Namely, the encoder of the low resolution generator consists of $\textit{conv}_{
 residual blocks of $\textit{batch\_norm}$, $\textit{relu}$,
 $\textit{conv}_{3 \times 3}$ ,$\textit{batch\_norm}$, $\textit{relu}$,
 $\textit{conv}_{3 \times 3}$, (and a sum with the source).
-The residual blocks help to maintain the indentity of the source image
+The residual blocks help to maintain the identity of the source image
 \cite{he2015deep}.
 The decoder consists of two blocks, each is a sequence of
 $\textit{up\_sample}_{2 \times 2 }$, $\textit{batch\_norm}$,
@@ -169,9 +180,15 @@ We add skip connections from each of the encoding layers to its
 corresponding encoding layer, to form a U-Net architecture
 \cite{ronneberger2015unet}.
 
-TODO
-
-
+\subsection{First mask version for absolute motion transfer, with warping}
+Our main mask for the project is obtained from carefully observing the
+keypoint module from \cite{siarohin2020animating}. U-Net based keypoint
+modules of this form, work by extracting features, which pass through a
+$\textit{conv}$ layer to form a heatmap image $K$ channels, where $K$ is the
+number of keypoints. Then, a softmax is performed over the channels, and
+keypoints are extracted from the mean location of each heatmap channel.
+By carefully debugging the code, and the expectation for a segmentation map
+out of U-Net, we obtain:
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
@@ -186,6 +203,7 @@ prior in this project.
 \vskip -0.2in
 \end{figure}
 
+Summing over the channels, we get
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -199,24 +217,25 @@ generator.
 \end{center}
 \vskip -0.2in
 \end{figure}
+which is our output mask.
 
-
-\subsection{Losses}
-Perceptual Vgg19 \cite{simonyan2015deep}
-TODO
-\subsection{Version for relative motion transfer}
+\subsection{Second mask version for relative motion transfer}
 We purposes an additional "circles" only mask
 which can be used in the context
 of relative motion transfer during animation, as in
-\cite{siarohin2020order}, which isn't possible with a mask.
-The masks catches the geometry representation \cite{wu2019transgaga} of the
+\cite{siarohin2020order}, which isn't possible with the previous heatmap mask.
+The mask catches the geometry representation \cite{wu2019transgaga} of the
 image, and by forcing it to be described as keypoints with a center, we can
 use the relative coordinates for the animation. However, this module didn't
 perform as well as our heatmap mask module (~\ref{table:results}).
 Relative motion transfer isn't always the wanted outcome, but this work
 indicates that a keypoint-only-prior based module is feasible for the task.
+It can be expected that we will get results which are more similar to
+\cite{siarohin2019animating}, due to the fact that the only information
+that the pair of masks contain is the keypoint displacement, so our deep
+network can only try its best to simulate a zero order approximation.
 
-
+By taking the softmax over the heatmap, we get:
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
@@ -230,6 +249,7 @@ $K$ channels of the keypoint detector network used in
 \vskip -0.2in
 \end{figure}
 
+Summing over the channels, we get
 
 \begin{figure}[ht]
 \vskip 0.2in
@@ -243,6 +263,12 @@ generator.
 \end{center}
 \vskip -0.2in
 \end{figure}
+which is our output mask.
+
+
+\subsection{Losses}
+Perceptual Vgg19 \cite{simonyan2015deep}
+TODO
 
 \section{Experiments}
 \subsection{Datasets}
@@ -303,7 +329,7 @@ Ours & \includegraphics[width=1cm, height=1cm]{images/5_OURS_1.JPG} &
 
 
 \subsection{Comparison with Previous Works}
-In order to compere our work to previous works(Table~\ref{table:results}) we used metrics previously used in similar papers. Average Key-points Distance \cite{cao2017realtime} (AKD) measures the average key-points distance between the generated video and the source video. Average Euclidean Distance \cite{zheng2019joint}  (AED) measures the average euclidean distance
+In order to compare our work to previous works(Table~\ref{table:results}) we used metrics previously used in similar papers. Average Key-points Distance \cite{cao2017realtime} (AKD) measures the average key-points distance between the generated video and the source video. Average Euclidean Distance \cite{zheng2019joint}  (AED) measures the average euclidean distance
  between the representations of the ground-truth and generated videos in some embedding space. In addition, we added the L1 distance as well. The AED and AKD metrics were calculated using the following github: https://github.com/AliaksandrSiarohin/pose-evaluation.
 
 
@@ -353,7 +379,7 @@ appearance of the source image and the mask which represents the structure,
 decoupled from any appearance naturally by the assumption that during the
 training of the keypoint detector, the heatmap mask went into a keypoint
 bottleneck. After evaluation, we can conclude that our method is
-competitive with the state of the art, and outperformes them in many cases.
+competitive with the state of the art, and outperforms them in many cases.
 \section*{Software and Data}
 Detailed in our repository:
 \\
