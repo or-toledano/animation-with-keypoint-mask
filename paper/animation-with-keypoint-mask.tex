@@ -38,7 +38,7 @@
 
 \icmlcorrespondingauthor{Or Toledano}{ortoledano@protonmail.com}
 \icmlcorrespondingauthor{Yanir Marmor}{yanirmr@gmail.com}
-\icmlcorrespondingauthor{Dov Gertz}{TODO}
+\icmlcorrespondingauthor{Dov Gertz}{dovgertz1@gmail.com}
 
 
 \icmlkeywords{Machine Learning, ICML}
@@ -329,8 +329,10 @@ Ours & \includegraphics[width=1cm, height=1cm]{images/5_OURS_1.JPG} &
 
 
 \subsection{Comparison with Previous Works}
-In order to compare our work to previous works(Table~\ref{table:results}) we used metrics previously used in similar papers. Average Key-points Distance \cite{cao2017realtime} (AKD) measures the average key-points distance between the generated video and the source video. Average Euclidean Distance \cite{zheng2019joint}  (AED) measures the average euclidean distance
- between the representations of the ground-truth and generated videos in some embedding space. In addition, we added the L1 distance as well. The AED and AKD metrics were calculated using the following github: https://github.com/AliaksandrSiarohin/pose-evaluation.
+In order to compare our work to previous works (Table~\ref{table:results}) we used metrics previously used in similar papers. Average Key-points Distance \cite{cao2017realtime} (AKD) measures the average key-points distance between the generated video and the source video. Average Euclidean Distance \cite{zheng2019joint}  (AED) measures the average euclidean distance
+ between the representations of the ground-truth and generated videos in some embedding space. In addition, we added the L1 distance as well. Our AED and AKD metrics were calculated using the following github: https://github.com/AliaksandrSiarohin/pose-evaluation.
+
+ When comparing our work visually to the previous state of the art models (Table~\ref{table:images}) we argue that our results are visually preferable. The location of the limbs and their geometry are both more natural and more coherent with the driving frames compared to previous work. For instance, in the images in the 4th column, the geometry of the left leg in FOMM is very unnatural where as ours is more similar to the driving frame. Furthermore, in the 3rd column in the FOMM we can see that the left arm disappears where as in our work the left arm relatively follows the driving frame.
 
 
 % Note use of \abovespace and \belowspace to get reasonable spacing
@@ -347,6 +349,7 @@ In order to compare our work to previous works(Table~\ref{table:results}) we use
 \toprule
 Method & AKD & AED & L1 \\
 \midrule
+X2Face    & 17.654 & 0.272 & 0.080 \\
 Monkey-Net    & 10.798 & 0.228 & 0.077 \\
 FOMM    & 6.872 & 0.167 & 0.063 \\
 Perturbed Mask & 4.239 & 0.147 & 0.047 \\
