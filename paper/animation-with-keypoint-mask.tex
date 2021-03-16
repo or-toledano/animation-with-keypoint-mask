@@ -13,7 +13,6 @@
 % Attempt to make hyperref and algorithmic work together better:
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
-
 \usepackage[accepted]{icml2021}
 
 % The \icmltitle you define below is probably too long as a header.
@@ -127,6 +126,8 @@ Basically, we need to use a pre-trained keypoints detector for our model.
 \cite{siarohin2019animating} \cite{thewlis2017unsupervised}
 \cite{zhang2018unsupervised} \cite{jakab2018unsupervised}
 \cite{newell2016stacked}
+TODO?
+
 
 \section{Methodology}
 The network can be split to to parts: obtaining the mask, and generating
@@ -136,9 +137,96 @@ source image, source mask and driving mask; Followed by upscaling of the
 low scale synthesized prediction by passing it with the source frame to a
 high resolution generator.
 We created two different versions for the mask generator, and chose to show
-results for the first, absolute one, due to significant performance. The
+results for the first, absolute one, due to its significant performance. The
 performance drop for our second, relative version was expected because the
 mask contained less structural information.
+We refer to the fist version as "keypoint heatmap", and to the second as
+"circles mask" or "keypoints after softmax".
+
+\subsection{First mask version for absolute motion transfer, with warping}
+Our main mask for the project is obtained from carefully observing the
+keypoint module from \cite{siarohin2020order}. U-Net based keypoint
+modules of this form, work by extracting features, which pass through a
+$\textit{conv}$ layer to form a heatmap image $K$ channels, where $K$ is the
+number of keypoints. Then, a softmax is performed over the channels, and
+keypoints are extracted from the mean location of each heatmap channel.
+By carefully debugging the code, and the expectation for a segmentation map
+out of U-Net, we obtain Figure~\ref{mask-10kp}.
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/mask_10kp}}
+\caption{
+$K$ channels of the keypoint detector network used in
+\cite{siarohin2020order}, before the softmax activation. Our main motion
+prior in this project.
+}
+\label{mask-10kp}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+Summing over the channels, we get Figure~\ref{mask-sum}.
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/mask_sum}}
+\caption{
+The sum of the $K$ channels which is fed as a structural mask into the
+generator.
+}
+\label{mask-sum}
+\end{center}
+\vskip -0.2in
+\end{figure}
+which is our output mask, aka the heatmap, pre softmax mask.
+
+\subsection{Second mask version for relative motion transfer}
+We purposes an additional "circles" only mask
+which can be used in the context
+of relative motion transfer during animation, as in
+\cite{siarohin2020order}, which isn't possible with the previous heatmap mask.
+The mask catches the geometry representation \cite{wu2019transgaga} of the
+image, and by forcing it to be described as keypoints with a center, we can
+use the relative coordinates for the animation. However, this module didn't
+perform as well as our heatmap mask module (Table~\ref{table:results}).
+Relative motion transfer isn't always the wanted outcome, but this work
+indicates that a keypoint-only-prior based module is feasible for the task.
+It can be expected that we will get results which are more similar to
+\cite{siarohin2019animating}, due to the fact that the only information
+that the pair of masks contain is the keypoint displacement, so our deep
+network can only try its best to simulate a zero order approximation.
+
+By taking the softmax over the heatmap, we get Table~\ref{softmax-10kp}.
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/softmax_10kp}}
+\caption{
+$K$ channels of the keypoint detector network used in
+\cite{siarohin2020order}, after the softmax activation and Gaussian fit.
+}
+\label{softmax-10kp}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+Summing over the channels, we get Table~\ref{softmax-sum}.
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/softmax_sumkp}}
+\caption{
+The sum of the $K$ channels which is fed as a structural mask into the
+generator.
+}
+\label{softmax-sum}
+\end{center}
+\vskip -0.2in
+\end{figure}
+which is our output mask, aka the keypoints after softmax mask.
 
 \subsection{Architecture}
 \label{method}
@@ -180,95 +268,19 @@ We add skip connections from each of the encoding layers to its
 corresponding encoding layer, to form a U-Net architecture
 \cite{ronneberger2015unet}.
 
-\subsection{First mask version for absolute motion transfer, with warping}
-Our main mask for the project is obtained from carefully observing the
-keypoint module from \cite{siarohin2020order}. U-Net based keypoint
-modules of this form, work by extracting features, which pass through a
-$\textit{conv}$ layer to form a heatmap image $K$ channels, where $K$ is the
-number of keypoints. Then, a softmax is performed over the channels, and
-keypoints are extracted from the mean location of each heatmap channel.
-By carefully debugging the code, and the expectation for a segmentation map
-out of U-Net, we obtain:
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{visualizations/mask_10kp}}
-\caption{
-$K$ channels of the keypoint detector network used in
-\cite{siarohin2020order}, before the softmax activation. Our main motion
-prior in this project.
-}
-\label{mask-10kp}
-\end{center}
-\vskip -0.2in
-\end{figure}
-
-Summing over the channels, we get
-
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{visualizations/mask_sum}}
-\caption{
-The sum of the $K$ channels which is fed as a structural mask into the
-generator.
-}
-\label{mask-sum}
-\end{center}
-\vskip -0.2in
-\end{figure}
-which is our output mask.
-
-\subsection{Second mask version for relative motion transfer}
-We purposes an additional "circles" only mask
-which can be used in the context
-of relative motion transfer during animation, as in
-\cite{siarohin2020order}, which isn't possible with the previous heatmap mask.
-The mask catches the geometry representation \cite{wu2019transgaga} of the
-image, and by forcing it to be described as keypoints with a center, we can
-use the relative coordinates for the animation. However, this module didn't
-perform as well as our heatmap mask module (~\ref{table:results}).
-Relative motion transfer isn't always the wanted outcome, but this work
-indicates that a keypoint-only-prior based module is feasible for the task.
-It can be expected that we will get results which are more similar to
-\cite{siarohin2019animating}, due to the fact that the only information
-that the pair of masks contain is the keypoint displacement, so our deep
-network can only try its best to simulate a zero order approximation.
-
-By taking the softmax over the heatmap, we get:
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{visualizations/softmax_10kp}}
-\caption{
-$K$ channels of the keypoint detector network used in
-\cite{siarohin2020order}, after the softmax activation and Gaussian fit.
-}
-\label{softmax-10kp}
-\end{center}
-\vskip -0.2in
-\end{figure}
-
-Summing over the channels, we get
-
-\begin{figure}[ht]
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{visualizations/softmax_sumkp}}
-\caption{
-The sum of the $K$ channels which is fed as a structural mask into the
-generator.
-}
-\label{softmax-sum}
-\end{center}
-\vskip -0.2in
-\end{figure}
-which is our output mask.
-
 
 \subsection{Losses}
-Perceptual Vgg19 \cite{simonyan2015deep}
-TODO
+We use the same perceptual loss as in \cite{siarohin2020order} which is
+based on the implemantation of \cite{wang2018videotovideo}. With the input
+driving frame $D$ and the corresponding recontructed frame $\hat{D}$, the
+reconstruction loss is written as: $L_{rec}(\hat{D}, D) =
+\sum_{i=1}^{I} |N_i(\hat{D})-N_i(D)|$, where $N_i(\cdot)$ is the $i^{th}$
+channel feature extracted from a specific VGG-19 layer \cite{simonyan2015deep}
+and $I$ is the number of feature channels in this layer. Additionally we use this lose on
+a number of resolutions, forming a pyramid obtained by down-sampling
+$\hat{D}$ and $D$, similarly to \cite{}, \cite{}. The resolutions are $256
+\times 256$, $128 \times 128$, $64 \times 64$ and $32 \times 32$.
+
 
 \section{Experiments}
 \subsection{Datasets}
@@ -354,7 +366,7 @@ X2Face    & 17.654 & 0.272 & 0.080 \\
 Monkey-Net    & 10.798 & 0.228 & 0.077 \\
 FOMM    & 6.872 & 0.167 & 0.063 \\
 Perturbed Mask & 4.239 & 0.147 & 0.047 \\
-Ours softmax & 14.760& 0.245 & 0.077 \\
+Ours (circles mask) & 14.760& 0.245 & 0.077 \\
 Ours & 5.551 & 0.141 &  0.045\\
 \midrule
 Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
