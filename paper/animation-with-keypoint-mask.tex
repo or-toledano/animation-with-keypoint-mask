@@ -47,8 +47,8 @@
 \printAffiliationsAndNotice{}
 
 \begin{abstract}
-Image animation is the task of synthesizing future video frames of a single
-source image according to the motion from a driving video.
+Motion transfer is the task of synthesizing future video frames of a single
+source image according to the motion from a given driving video.
 This task is challenging due to the complexity of motion representation
 and the unknown relations between the driving video and the source image.
 Despite this difficulty, this problem attracted great interests from
@@ -67,19 +67,19 @@ structure of the input.
 
 \section{Introduction}
 
-% add some words about good and evil use in this technique
+TODO: add here table with to rows - one of original video and the other with generated one - on the same movement. this is our click-bite!
 
-\cite{Mirsky_2021} in their survey about Creation and Detection of Deepfakes split this area into four categories of tasks:
-reenactment, replacement, editing,
-and synthesis.
+Take a look at Figure 1 for two video sequences. The input is a YouTube clip of a Thai-Chi artist(?) (the source subject) performing a series of motions in the top row. Our algorithm's output is shown in the bottom row. It refers to frames that appear to show a different person (the target subject) executing the same motions. The twist is that the target individual has never performed the same exact sequence of motions as the source. In reality, he was photographed another movement with no clear reference to the source's actions.
+And, as the figure shows, the source and the target are of different races, have different builds, and dress differently.
 
+In this study, we propose a simple, however surprisingly efficient approach to video retargeting – the transfer of the movement automatically from driving video sequence trough an source image for a new artificial video. Two inputs – image of the target person whose appearance we want to summarize and the other one of the source theme, the motion of which we want to impose on our target person – allow us to transfer movement between them by learning a compact motion representation.
+With our framework, we create a variety of videos that never even happen.
 
-our project focus involved at the "replacement" category.
-
-TODO: didn't you mean synthesis?
+A lot of researches observe that the key-point-based pose maintains motion signatures over time, while abstracting all possible subject identities as much as possible. We therefore use the key-point-based pattern in more "soft" way. We balanced the key points in such a way that delicate movements could be restored with great precision. 
 
 The main challenges we need to deal with, as they defined in that survey are: paired training, identity leakage, occlusions and temporal coherence,
 
+TODO: does the next paragraph required?
 
 Our paper focuses on the motion transfer problem: given a source image $S$
 and a driving video $D$, the goal is to synthesize a video with the identity
@@ -87,14 +87,30 @@ of $S$, and the motion from $D$.
 Some notable works \cite{siarohin2020order}, \cite{wiles2018x2face},
 \cite{siarohin2019animating}.
 
+TODO: does the next line required?
 Our method does not rely on GANs - see Section~\ref{method}.
 
-our contribution it twofold: first, show that reducing the motion prior can
+TODO: I think we need to write the next pragraph with more juicy details. I wrote this too much laocnic.
+
+Our contribution it twofold: first, show that reducing the motion prior can
 work and yield better accuracy results, and second compact representation with better performance.
 
 \medskip
 
-\textbf{Related Work:} Our work doesn't rely directly on a strong motion prior,
+\textbf{Related Work:}
+Motion transfer has gained a lot of coverage over the last twenty years. Early approaches based on manipulating existing video footage to generate new content. They searched for frames in which the body position corresponded to the desired motion and use them to generate a new content\cite{bregler1997video}. Our approach is equally designed for videos, but rather than manipulating existing images, we learn to synthesize new movements that never was done.
+
+A number of techniques are based on calibrated multi camera systems to scan a target player and use an adapted 3D model of the target to control their motion in a new frame\cite{cheung2004markerless}. Our solution instead examines the transition of movement between 2D video subjects and prevents data calibration or 3D space boost.
+
+Deep learning for reanimation has been used in many implementations in recent works and relies on more accurate input representations. Due to the synthetic rendering, an interior model and a gaze map as an input. They manage to transfer head position and facial expressions among human subjects and to produce detailed portrait videos of their facial gestures\cite{kim2018deep}. Our problem is similar to that, except that our is full body movement  redirected and the inputs to our model are 2D video and an image. No external data replication is used. 
+
+Latest approaches concentrate on the disentangling of appearance and activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}. Similarly, we apply 
+our representation of motion to different target subjects to
+generate new motions. However, in contrast to these  general methods we specialize on synthesizing detailed martial art videos.
+
+TODO: how do you think we need to finish this section?
+
+Our work doesn't rely directly on a strong motion prior,
 but uses a structure mask which was extracted from a keypoint detector
 of a motion based model, such as \cite{siarohin2020order}. The concept of using drawn keypoints as
 a geometry representation (structural mask) was already used in the context
@@ -111,7 +127,7 @@ prior, and leave some space for our network to achieve better results.
 \subsection{Keypoints}
 In contrast to pixel-based approaches that were prevalent until a few years
 ago, recently, keypoint-based approaches have been perceived as having the
-potential to achieve high performance in the field of video prediction.
+potential to achieve high performance in the field of video reanimation. Some recent works that use this method are:
 \cite{kim2019unsupervised}, \cite{balakrishnan2018synthesizing}
 \cite{ma2017pose}  \cite{reed2017parallel} \cite{chan2019everybody}
 \cite{villegas2017learning}
@@ -122,11 +138,11 @@ potential to achieve high performance in the field of video prediction.
 However, these works require frame-by-frame keypoints labeling,
 which limits the applicability of the methods.
 There are several of solutions for this problem.
-Basically, we need to use a pre-trained keypoints detector for our model.
+Basically, we need to use a pre-trained keypoints detector for our model. This pre-detection of keypoint used in some papers in the last years like: TODO: sorry, I think this list need recheck or deletion:
 \cite{siarohin2019animating} \cite{thewlis2017unsupervised}
 \cite{zhang2018unsupervised} \cite{jakab2018unsupervised}
 \cite{newell2016stacked}
-TODO?
+TODO: close this paragraph with something about the keypoint detector we use and why
 
 
 \section{Methodology}
