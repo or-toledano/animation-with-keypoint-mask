@@ -271,8 +271,8 @@ corresponding encoding layer, to form a U-Net architecture
 
 \subsection{Losses}
 We use the same perceptual loss as in \cite{siarohin2020order} which is
-based on the implemantation of \cite{wang2018videotovideo}. With the input
-driving frame $D$ and the corresponding recontructed frame $\hat{D}$, the
+based on the implementation of \cite{wang2018videotovideo}. With the input
+driving frame $D$ and the corresponding reconstructed frame $\hat{D}$, the
 reconstruction loss is written as: $L_{rec}(\hat{D}, D) =
 \sum_{i=1}^{I} |N_i(\hat{D})-N_i(D)|$, where $N_i(\cdot)$ is the $i^{th}$
 channel feature extracted from a specific VGG-19 layer \cite{simonyan2015deep}
@@ -284,7 +284,10 @@ $\hat{D}$ and $D$, similarly to \cite{}, \cite{}. The resolutions are $256
 
 \section{Experiments}
 \subsection{Datasets}
-The training and evaluation were done using Tai-Chi-HD dataset which containing short videos of people doing tai-chi exercises. Following \cite{siarohin2020order}, 3,141 tai-chi videos were downloaded from YouTube. The videos were cropped and resized to a resolution of $256^2$, while preserving the aspect ratio. There are 3,016 training videos and 125 test videos.
+The training and evaluation were done using Tai-chi-HD dataset which
+containing short videos of people performing Tai-chi exercises.
+Following \cite{siarohin2020order}, 3,141 Tai-chi videos were downloaded from YouTube.
+The videos were cropped and resized to a resolution of $256^2$, while preserving the aspect ratio. There are 3,016 training videos and 125 test videos.
 
 \begin{table}[t]
 \caption{Images comparison}
@@ -353,7 +356,7 @@ measures the average euclidean distance
  Our AED and AKD metrics were calculated using the following repository:
  \url{https://github.com/AliaksandrSiarohin/pose-evaluation}
 
-\subsubsection{Qualititive comparison}
+\subsubsection{Qualitative comparison}
 When comparing our work visually to the previous state of the art models
 (Table~\ref{table:images}) we argue that our results are visually preferable.
 The location of the limbs and their geometry are both more natural and more
@@ -364,11 +367,11 @@ Furthermore, in the 3rd column in the FOMM we can see that the left arm
 disappears where as in our work the left arm relatively follows the driving
 frame. In these frames the pose of the two hands is closer to the original
 than the perturbed mask network.
-In addition, the red decoration in the background is consitant in
+In addition, the red decoration in the background is consistent in
 our video, compared to all of the other works (perhaps with the exception
 of Monkey-Net) where it tends to disappear
 or have distortions. This indicates that our mask didn't include the
-irrelavent parts for the motion.
+irrelevant parts for the motion.
 
 
 % Note use of \abovespace and \belowspace to get reasonable spacing
@@ -401,11 +404,14 @@ Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
 \vskip -0.1in
 \end{table}
 \section{Future work}
-Test more datasets
-Remove the explicit sum of channels, maybe something deep in the features
-extracted in the keypoint detector
-Maybe feed all 10 channel masks into the generator
-Increase number of keypoints (probably won't because of memory)
+We would like to test our module on more datasets, and compare them to the
+state of the art. In addition, summing the heatmap channels might not be
+optimal, and there is certainly some space to try something deeper with the
+features extracted in the keypoint detector as an input, or feed all of the
+channels separately into the generator.
+We may also increase the number of keypoints, but that would probably be
+more beneficent to the second type of mask, and would increase the
+required GPU memory proportionally.
 
 \section{Conclusions}
 We constructed a novel method for image animation by moving the need for
