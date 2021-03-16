@@ -342,10 +342,33 @@ Ours & \includegraphics[width=1cm, height=1cm]{images/5_Ours_1} &
 
 
 \subsection{Comparison with Previous Works}
-In order to compare our work to previous works (Table~\ref{table:results}) we used metrics previously used in similar papers. Average Key-points Distance \cite{cao2017realtime} (AKD) measures the average key-points distance between the generated video and the source video. Average Euclidean Distance \cite{zheng2019joint}  (AED) measures the average euclidean distance
- between the representations of the ground-truth and generated videos in some embedding space. In addition, we added the L1 distance as well. Our AED and AKD metrics were calculated using the following github: https://github.com/AliaksandrSiarohin/pose-evaluation.
+In order to compare our work to previous works (Table~\ref{table:results})
+we used metrics previously used in similar papers.
+Average Key-points Distance \cite{cao2017realtime} (AKD)
+measures the average key-points distance between the generated video and
+the source video. Average Euclidean Distance \cite{zheng2019joint} (AED)
+measures the average euclidean distance
+ between the representations of the ground-truth and generated videos in
+ some embedding space. In addition, we added the L1 distance as well.
+ Our AED and AKD metrics were calculated using the following repository:
+ \url{https://github.com/AliaksandrSiarohin/pose-evaluation}
 
- When comparing our work visually to the previous state of the art models (Table~\ref{table:images}) we argue that our results are visually preferable. The location of the limbs and their geometry are both more natural and more coherent with the driving frames compared to previous work. For instance, in the images in the 4th column, the geometry of the left leg in FOMM is very unnatural where as ours is more similar to the driving frame. Furthermore, in the 3rd column in the FOMM we can see that the left arm disappears where as in our work the left arm relatively follows the driving frame.
+\subsubsection{Qualititive comparison}
+When comparing our work visually to the previous state of the art models
+(Table~\ref{table:images}) we argue that our results are visually preferable.
+The location of the limbs and their geometry are both more natural and more
+coherent with the driving frames compared to previous works. For instance,
+in the images in the 4th column, the geometry of the left leg in FOMM
+is very unnatural where as ours is more similar to the driving frame.
+Furthermore, in the 3rd column in the FOMM we can see that the left arm
+disappears where as in our work the left arm relatively follows the driving
+frame. In these frames the pose of the two hands is closer to the original
+than the perturbed mask network.
+In addition, the red decoration in the background is consitant in
+our video, compared to all of the other works (perhaps with the exception
+of Monkey-Net) where it tends to disappear
+or have distortions. This indicates that our mask didn't include the
+irrelavent parts for the motion.
 
 
 % Note use of \abovespace and \belowspace to get reasonable spacing
