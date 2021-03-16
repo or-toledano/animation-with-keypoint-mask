@@ -342,8 +342,6 @@ Ours & \includegraphics[width=1cm, height=1cm]{images/5_Ours_1} &
 \end{table}
 
 
-
-
 \subsection{Comparison with Previous Works}
 In order to compare our work to previous works (Table~\ref{table:results})
 we used metrics previously used in similar papers.
@@ -416,7 +414,8 @@ required GPU memory proportionally.
 \section{Conclusions}
 We constructed a novel method for image animation by moving the need for
 a strong motion prior (optical flow) to the assumption of a pre-trained
-keypoint detector/ keypoint heatmaps prior to activation.
+keypoint detector/keypoint heatmaps prior to activation, which might be
+based on a motion prior.
 By doing so, we encapsulated motion to a motion mask, which is
 bottlenecked by the prior training which has the keypoint bottleneck.
 The motion masks are then fed into a generator, which combines the
