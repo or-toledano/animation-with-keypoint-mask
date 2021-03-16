@@ -146,7 +146,7 @@ mask contained less structural information.
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{second_meeting_pres}}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/second_meeting_pres}}
 \caption{
 Architecture (TODO: someone create a real graphic out of this)
 }
@@ -155,7 +155,7 @@ Architecture (TODO: someone create a real graphic out of this)
 \vskip -0.2in
 \end{figure}
 
-Our architecture follows \cite{siarohin2020animating} without the dense
+Our architecture follows \cite{siarohin2020order} without the dense
 motion module, after changing its keypoint generation module to return our
 mask. After the mask is obtained, we follow the encoder decoder approach as
 \cite{shalev2020image}.
@@ -182,7 +182,7 @@ corresponding encoding layer, to form a U-Net architecture
 
 \subsection{First mask version for absolute motion transfer, with warping}
 Our main mask for the project is obtained from carefully observing the
-keypoint module from \cite{siarohin2020animating}. U-Net based keypoint
+keypoint module from \cite{siarohin2020order}. U-Net based keypoint
 modules of this form, work by extracting features, which pass through a
 $\textit{conv}$ layer to form a heatmap image $K$ channels, where $K$ is the
 number of keypoints. Then, a softmax is performed over the channels, and
@@ -192,7 +192,7 @@ out of U-Net, we obtain:
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{mask_10kp}}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/mask_10kp}}
 \caption{
 $K$ channels of the keypoint detector network used in
 \cite{siarohin2020order}, before the softmax activation. Our main motion
@@ -208,7 +208,7 @@ Summing over the channels, we get
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{mask_sum}}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/mask_sum}}
 \caption{
 The sum of the $K$ channels which is fed as a structural mask into the
 generator.
@@ -239,7 +239,7 @@ By taking the softmax over the heatmap, we get:
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{softmax_10kp}}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/softmax_10kp}}
 \caption{
 $K$ channels of the keypoint detector network used in
 \cite{siarohin2020order}, after the softmax activation and Gaussian fit.
@@ -254,7 +254,7 @@ Summing over the channels, we get
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
-\centerline{\includegraphics[width=\columnwidth]{softmax_sumkp}}
+\centerline{\includegraphics[width=\columnwidth]{visualizations/softmax_sumkp}}
 \caption{
 The sum of the $K$ channels which is fed as a structural mask into the
 generator.
