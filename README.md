@@ -4,8 +4,8 @@ https://user-images.githubusercontent.com/49984106/111497559-df152780-8749-11eb-
 # animation-with-keypoint-mask
 The right most square is the final result. Softmax mask (circles):
 <img src="examples/softmax003/first.gif" width="512">
-<img src="examples/softmax003/second.gif" width="512">
-Heatmap mask:
+<img src="examples/softmax003/second.gif" width="512">\
+Heatmap mask:\
 <img src="examples/heatmap/first.gif" width="512">
 <img src="examples/heatmap/second.gif" width="512">
 
