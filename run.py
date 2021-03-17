@@ -82,7 +82,7 @@ if __name__ == '__main__':
         reconstruction(config, generator, kp_detector, opt.checkpoint, log_dir, dataset)
     elif opt.mode == 'animate':
         print('Animate...')
-        kp_after_softmax = config['model_params']['kp_detector_params']
+        kp_after_softmax = config['model_params']['kp_detector_params']['kp_after_softmax']
         if kp_after_softmax:
             kp_detector = FommKpDetector(checkpoint_with_kp, **config['model_params']['kp_detector_params'],
                                          **config['model_params']['common_params'])
