@@ -54,15 +54,14 @@ and the unknown relations between the driving video and the source image.
 Despite this difficulty, this problem attracted great interests from
 researches at the recent years, with gradual improvements. The
 problem can be thought as decoupling of motion and appearance, which is
-often solved by extracting the motion from keypoint movement. In this work,
-we extract the structure from a keypoint heatmap, without an explicit
-motion representation. Then, the structures from the image and the video
-are extracted to warp the image according to the video, by a deep
-generator. Our approach outperforms the state of the art in popular
-reconstruction benchmarks, and an improvement can be easily observed in
-animating videos. It is generic, unsupervised and can be applied to
-animation of any arbitrary object, without any domain specific model for the
+often solved by extracting the motion from keypoint movement.
+We chose to use the generic, unsupervised setting, so we can apply
+animation to any arbitrary object, without any domain specific model for the
 structure of the input.
+In this work, we extract the structure from a keypoint heatmap, without an
+explicit motion representation. Then, the structures from the image and the video
+are extracted to warp the image according to the video, by a deep
+generator.
 \end{abstract}
 
 \section{Introduction}
@@ -155,7 +154,7 @@ source image, source mask and driving mask; Followed by upscaling of the
 low scale synthesized prediction by passing it with the source frame to a
 high resolution generator.
 We created two different versions for the mask generator, and chose to show
-results for the first, absolute one, due to its significant performance. The
+results for the first, absolute one, due to its performance. The
 performance drop for our second, relative version was expected because the
 mask contained less structural information.
 We refer to the fist version as "keypoint heatmap", and to the second as
@@ -371,24 +370,12 @@ measures the average euclidean distance
  some embedding space. In addition, we added the L1 distance as well.
  Our AED and AKD metrics were calculated using the following repository:
  \url{https://github.com/AliaksandrSiarohin/pose-evaluation}
-
-\subsubsection{Qualitative comparison}
-When comparing our work visually to the previous state of the art models
-(Table~\ref{table:images}) we argue that our results are visually preferable.
-The location of the limbs and their geometry are both more natural and more
-coherent with the driving frames compared to previous works. For instance,
-in the images in the 4th column, the geometry of the left leg in FOMM
-is very unnatural where as ours is more similar to the driving frame.
-Furthermore, in the 3rd column in the FOMM we can see that the left arm
-disappears where as in our work the left arm relatively follows the driving
-frame. In these frames the pose of the two hands is closer to the original
-than the perturbed mask network.
-In addition, the red decoration in the background is consistent in
-our video, compared to all of the other works (perhaps with the exception
-of Monkey-Net) where it tends to disappear
-or have distortions. This indicates that our mask didn't include the
-irrelevant parts for the motion.
-
+\\
+Note that those metrics aren't optimal since one can easily improve
+reconstruction by increasing the bottleneck, and we can see our
+artifacts in animation results (Table~\ref{table:images}).
+However, our pose did follow the driving video well, and to improve the
+identity and background artifacts, we suggest some fixes in Section~\ref{future}.
 
 % Note use of \abovespace and \belowspace to get reasonable spacing
 % above and below tabular lines.
@@ -420,14 +407,18 @@ Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
 \vskip -0.1in
 \end{table}
 \section{Future work}
+\label{future}
 We would like to test our module on more datasets, and compare them to the
 state of the art. In addition, summing the heatmap channels might not be
 optimal, and there is certainly some space to try something deeper with the
 features extracted in the keypoint detector as an input, or feed all of the
-channels separately into the generator.
+channels separately into the generator. We want to experiment with
+mask thresholds due to the distortions in the animation background.
 We may also increase the number of keypoints, but that would probably be
 more beneficent to the second type of mask, and would increase the
-required GPU memory proportionally.
+required GPU memory proportionally. We also thought about coloring
+matching keypoints with the same color to help the module to learn a motion
+flow.
 
 \section{Conclusions}
 We constructed a novel method for image animation by moving the need for
@@ -441,7 +432,7 @@ appearance of the source image and the mask which represents the structure,
 decoupled from any appearance naturally by the assumption that during the
 training of the keypoint detector, the heatmap mask went into a keypoint
 bottleneck. After evaluation, we can conclude that our method is
-competitive with the state of the art, and outperforms them in many cases.
+feasible, although with some artifacts.
 \section*{Software and Data}
 Detailed in our repository:
 \\
