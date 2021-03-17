@@ -1,7 +1,11 @@
 # animation-with-keypoint-mask
+The right most square is the final result. Softmax mask (circles):
+<img src="examples/softmax003/first.gif" width="512">
+<img src="examples/softmax003/second.gif" width="512">
+Heatmap mask:
+<img src="examples/heatmap/first.gif" width="512">
+<img src="examples/heatmap/second.gif" width="512">
 
-<img
-src="examples/heatmap/aDyyTMUBoLE#000164#000351.mp4-ab28GAufK8o#000261#000596.mp4.mp4" width="512">
 
 
 ```conda env create -f environment.yml```\
