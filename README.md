@@ -1,4 +1,9 @@
 # animation-with-keypoint-mask
+
+<img
+src="examples/heatmap/aDyyTMUBoLE#000164#000351.mp4-ab28GAufK8o#000261#000596.mp4.mp4" width="512">
+
+
 ```conda env create -f environment.yml```\
 ```conda activate venv11```\
 Please obtain pretrained keypoint module. You can do so by\
@@ -16,7 +21,7 @@ the code will create a folder in the log directory (each run will create a time-
 checkpoints will be saved to this folder.
 to check the loss values during training see ```log.txt```.
 you can also check training data reconstructions in the ```train-vis``` sub-folder.
-by default the batch size is tuned to run on 4 titan-x gpu (apart from speed it does not make much difference). 
+by default the batch size is tuned to run on 4 titan-x gpu (apart from speed it does not make much difference).
 You can change the batch size in the train_params in corresponding ```.yaml``` file.
 
 ### evaluation on video reconstruction
@@ -41,26 +46,9 @@ the ```animation``` sub-folder will be created in the same folder as the checkpo
 you can find the generated video there and its loss-less version in the ```png``` sub-folder.
 by default video from test set will be randomly paired, but you can specify the "source,driving" pairs in the corresponding ```.csv``` files. the path to this file should be specified in corresponding ```.yaml``` file in pairs_list setting.
 
-there are 2 different ways of performing animation:
-by using **absolute** keypoint locations or by using **relative** keypoint locations.
-
-1) <i>animation using absolute coordinates:</i> the animation is performed using the absolute positions of the driving video and appearance of the source image.
-in this way there are no specific requirements for the driving video and source appearance that is used.
-however, this usually leads to poor performance since unrelevant details such as shape is transferred.
-check animate parameters in ```taichi-256.yaml``` to enable this mode.
-
-<img src="sup-mat/absolute-demo.gif" width="512"> 
-
-2) <i>animation using relative coordinates:</i> from the driving video we first estimate the relative movement of each keypoint,
-then we add this movement to the absolute position of keypoints in the source image.
-this keypoint along with source image is used for animation. this usually leads to better performance, however this requires
-that the object in the first frame of the video and in the source image have the same pose
-
-<img src="sup-mat/relative-demo.gif" width="512"> 
-
 
 ### datasets
-1) **taichi**. follow the instructions in [data/taichi-loading](data/taichi-loading/readme.md) or instructions from https://github.com/aliaksandrsiarohin/video-preprocessing. 
+1) **taichi**. follow the instructions in [data/taichi-loading](data/taichi-loading/readme.md) or instructions from https://github.com/aliaksandrsiarohin/video-preprocessing.
 
 
 ### training on your own dataset
