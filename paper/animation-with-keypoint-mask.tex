@@ -47,7 +47,7 @@
 \printAffiliationsAndNotice{}
 
 \begin{table}[t]
-\caption{Motion transfer example}
+\caption{\textbf{Motion transfer example:} Given a YouTube clip of a Thai-Chi artist (top), and an image of another one, our method transfers the one’s performance onto the other (bottom).}
 \label{table:intro}
 \vskip 0.15in
 \begin{center}
@@ -94,57 +94,89 @@ generator.
 \end{abstract}
 
 \section{Introduction}
+Take a look at Figure ~\ref{table:intro} for two video sequences. The input
+is a YouTube clip of a Thai-Chi artist (the source subject) performing a
+series of complex motions in the top row. Our algorithm's output is shown in
+the bottom row. It refers to frames that appear to show a different person
+(the target subject) executing the same motions. The twist is that the
+target individual has never performed the same exact sequence of motions as
+the driver video. In reality, he was photographed another movement with no clear
+reference to the source's actions.
+And, as the figure shows, the source and the target are of different races,
+have different backgrounds, and dress differently.
 
-TODO: add here table with to rows - one of original video and the other with generated one - on the same movement. this is our click-bite!
-
-Take a look at Figure 1 for two video sequences. The input is a YouTube clip of a Thai-Chi artist(?) (the source subject) performing a series of motions in the top row. Our algorithm's output is shown in the bottom row. It refers to frames that appear to show a different person (the target subject) executing the same motions. The twist is that the target individual has never performed the same exact sequence of motions as the source. In reality, he was photographed another movement with no clear reference to the source's actions.
-And, as the figure shows, the source and the target are of different races, have different builds, and dress differently.
-
-In this study, we propose a simple, however surprisingly efficient approach to video retargeting – the transfer of the movement automatically from driving video sequence trough an source image for a new artificial video. Two inputs – image of the target person whose appearance we want to summarize and the other one of the source theme, the motion of which we want to impose on our target person – allow us to transfer movement between them by learning a compact motion representation.
+In this study, we propose a simple, however surprisingly efficient approach
+to video retargeting – the transfer of the movement automatically from
+driving video sequence trough an source image for a new artificial video.
+Two inputs – image of the target person whose appearance we want to
+summarize and the other one of the source theme, the motion of which we want
+to impose on our target person – allow us to transfer movement between them
+by learning a compact motion representation.
 With our framework, we create a variety of videos that never even happen.
 
-A lot of researches observe that the keypoint-based pose maintains motion
+A lot of researches observe that the keypoint-based pose preserves motion
 signatures over time, while abstracting all possible subject identities as
-much as possible. We therefore use the keypoint-based pattern in more "soft" way. We balanced the key points in such a way that delicate movements could be restored with great precision.
+much as possible. We therefore use the keypoint-based pattern without motion
+priors. We took the keypoints and use them for animate images such a way
+that doesn't need any external information about the subject or any
+assumption and prior about what is happening in the scene.
 
-The main challenges we need to deal with, as they defined in that survey are: paired training, identity leakage, occlusions and temporal coherence,
+The main challenges we need to deal with, as they defined in  \cite{Mirsky_2021} are generalization, temporal coherence, and occlusions.
 
-TODO: does the next paragraph required?
-
-Our paper focuses on the motion transfer problem: given a source image $S$
+Our paper focuses on this motion transfer problem: given a source image $S$
 and a driving video $D$, the goal is to synthesize a video with the identity
 of $S$, and the motion from $D$.
-Some notable works \cite{siarohin2020order}, \cite{wiles2018x2face},
-\cite{siarohin2019animating}.
 
-TODO: does the next line required?
-Our method does not rely on GANs - see Section~\ref{method}.
-
-TODO: I think we need to write the next pragraph with more juicy details. I wrote this too much laocnic.
-
-Our contribution it twofold: first, show that reducing the motion prior can
-work and yield better accuracy results, and second compact representation with better performance.
+Our contribution is twofold: first, we demonstrate that removing the motion prior will function and provide better accuracy outcomes, and second, we provide a compact representation with improved efficiency.
 
 \medskip
 
-\textbf{Related Work:}
-Motion transfer has gained a lot of coverage over the last twenty years. Early approaches based on manipulating existing video footage to generate new content. They searched for frames in which the body position corresponded to the desired motion and use them to generate a new content\cite{bregler1997video}. Our approach is equally designed for videos, but rather than manipulating existing images, we learn to synthesize new movements that never was done.
+\subsection{Related Work:}
+Motion transfer has gained a lot of coverage over the last twenty years.
+Early approaches based on manipulating existing video footage to generate
+new content. They searched for frames in which the body position
+corresponded to the desired motion and use them to generate a new
+content\cite{bregler1997video}. Our approach is equally designed for videos,
+but rather than manipulating existing images, we learn to synthesize new
+movements that never was done.
 
-A number of techniques are based on calibrated multi camera systems to scan a target player and use an adapted 3D model of the target to control their motion in a new frame\cite{cheung2004markerless}. Our solution instead examines the transition of movement between 2D video subjects and prevents data calibration or 3D space boost.
+A number of techniques are based on calibrated multi camera systems to scan
+a target player and use an adapted 3D model of the target to control their
+motion in a new frame\cite{cheung2004markerless}. Our solution instead
+examines the transition of movement between 2D video subjects and prevents
+data calibration or 3D space information.
 
-Deep learning for reanimation has been used in many implementations in recent works and relies on more accurate input representations. Due to the synthetic rendering, an interior model and a gaze map as an input. They manage to transfer head position and facial expressions among human subjects and to produce detailed portrait videos of their facial gestures\cite{kim2018deep}. Our problem is similar to that, except that our is full body movement  redirected and the inputs to our model are 2D video and an image. No external data replication is used.
+Deep learning for reanimation has been used in many implementations in
+recent works and relies on more accurate input representations. Due to the
+synthetic rendering, an interior model and a gaze map as an input. They
+manage to transfer head position and facial expressions among human subjects
+and to produce detailed portrait videos of their facial
+gestures\cite{kim2018deep}. Our problem is similar to that, except that our
+is full body movement  redirected and the inputs to our model are 2D video
+and an image. No external data replication is used.
 
-Latest approaches concentrate on the disentangling of appearance and activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}. Similarly, we apply
-our representation of motion to different target subjects to
-generate new motions. However, in contrast to these  general methods we specialize on synthesizing detailed martial art videos.
+Latest approaches concentrate on the disentangling of appearance and
+activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}.
+Similarly, we apply our representation of motion to different target 
+subjects to generate new motions. However, In contrast to these works, we did not use GAN but encoder-decoder approach.
 
-TODO: how do you think we need to finish this section?
+In comparison to the pixel-based approaches for image animation that were common until recently,
+keypoint-based approaches are now thought to have the ability to achieve
+high performance in the field of video reanimation. Some notable works in
+this area are \cite{siarohin2020order}, \cite{wiles2018x2face},
+\cite{siarohin2019animating}, \cite{kim2019unsupervised},
+\cite{balakrishnan2018synthesizing}, \cite{ma2017pose},
+\cite{reed2017parallel}, \cite{chan2019everybody}
 
-Our work doesn't rely directly on a strong motion prior,
-but uses a structure mask which was extracted from a keypoint detector
-of a motion based model, such as \cite{siarohin2020order}. The concept of using drawn keypoints as
-a geometry representation (structural mask) was already used in the context
-of image-to-image translation, in works such as TransGaGa \cite{wu2019transgaga}.
+Like \cite{siarohin2020order}, during training, our keypoint predictor does not require any keypoint annotations. This will result in erratic results. One of the most important forces motivating the exploration of unsupervised keypoints is the equivariance loss. It forces the model to predict keypoints that are consistent with known geometric transformations.
+
+In contrast to \cite{siarohin2020order}, our work does not depend on a strong
+motion prior directly, but rather on a
+structure mask derived from a keypoint detector of a motion-based model,
+such as \cite{siarohin2020order}. The idea of using drawn keypoints as a
+geometry representation (structural mask) was already used in image-to-image
+translation works such as TransGaGa \cite{wu2019transgaga}.
+
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
 by basing the mask off a motion related module, which saves us the hassle
@@ -154,40 +186,19 @@ can base more of the motion representation on the deep network, reduce our
 prior, and leave some space for our network to achieve better results.
 
 
-\subsection{Keypoints}
-In contrast to pixel-based approaches that were prevalent until a few years
-ago, recently, keypoint-based approaches have been perceived as having the
-potential to achieve high performance in the field of video reanimation. Some recent works that use this method are:
-\cite{kim2019unsupervised}, \cite{balakrishnan2018synthesizing}
-\cite{ma2017pose}  \cite{reed2017parallel} \cite{chan2019everybody}
-\cite{villegas2017learning}
-\cite{cai2018deep}
-\cite{wang2018every}
-\cite{reed2015deep}.
-
-However, these works require frame-by-frame keypoints labeling,
-which limits the applicability of the methods.
-There are several of solutions for this problem.
-Basically, we need to use a pre-trained keypoints detector for our model. This pre-detection of keypoint used in some papers in the last years like: TODO: sorry, I think this list need recheck or deletion:
-\cite{siarohin2019animating} \cite{thewlis2017unsupervised}
-\cite{zhang2018unsupervised} \cite{jakab2018unsupervised}
-\cite{newell2016stacked}
-TODO: close this paragraph with something about the keypoint detector we use and why
-
-
 \section{Methodology}
-The network can be split to to parts: obtaining the mask, and generating
+The network can be divided into two parts: obtaining the mask, and generating
 the synthesized frame. The generator architecture is constant amongst all of
 our variations, and can be described as low resolution generation from the
-source image, source mask and driving mask; Followed by upscaling of the
+source image, source mask and driving mask; Followed by up-scaling of the
 low scale synthesized prediction by passing it with the source frame to a
 high resolution generator.
-We created two different versions for the mask generator, and chose to show
-results for the first, absolute one, due to its performance. The
-performance drop for our second, relative version was expected because the
+We created two different versions for the mask generator: the first, an
+absolute motion transfer; the second,  a relative motion transfer. We chose
+to present the results for the first, absolute one, due to its performance.
+The performance drop for our second, relative version was expected because the
 mask contained less structural information.
-We refer to the fist version as "keypoint heatmap", and to the second as
-"circles mask" or "keypoints after softmax".
+The first version is referred as a "keypoint heatmap," while the second is referred as a "circles mask" or "keypoints after softmax".
 
 \subsection{First mask version for absolute motion transfer, with warping}
 Our main mask for the project is obtained from carefully observing the
@@ -233,16 +244,17 @@ We purposes an additional "circles" only mask
 which can be used in the context
 of relative motion transfer during animation, as in
 \cite{siarohin2020order}, which isn't possible with the previous heatmap mask.
-The mask catches the geometry representation \cite{wu2019transgaga} of the
-image, and by forcing it to be described as keypoints with a center, we can
-use the relative coordinates for the animation. However, this module didn't
-perform as well as our heatmap mask module (Table~\ref{table:results}).
-Relative motion transfer isn't always the wanted outcome, but this work
-indicates that a keypoint-only-prior based module is feasible for the task.
-It can be expected that we will get results which are more similar to
-\cite{siarohin2019animating}, due to the fact that the only information
-that the pair of masks contain is the keypoint displacement, so our deep
-network can only try its best to simulate a zero order approximation.
+The mask captures the image's geometry representation \cite{wu2019transgaga},
+and by requiring it to be represented as keypoints with a center, we can use
+the relative coordinates for the animation. This module, though, did not do
+as well as our heatmap mask module (Table~\ref{table:results}).
+
+While relative motion transition is not always desired, this work shows that
+a keypoint-only-prior-based module is feasible for the task.
+Since the only information contained in the pair of masks is the keypoint
+displacement, our deep network can only attempt to approximate a zero order
+approximation, we can anticipate results that are more close to
+\cite{siarohin2019animating}.
 
 By taking the softmax over the heatmap, we get Table~\ref{softmax-10kp}.
 \begin{figure}[ht]
@@ -330,10 +342,12 @@ $\hat{D}$ and $D$, similarly to \cite{}, \cite{}. The resolutions are $256
 
 \section{Experiments}
 \subsection{Datasets}
-The training and evaluation were done using Tai-chi-HD dataset which
-containing short videos of people performing Tai-chi exercises.
-Following \cite{siarohin2020order}, 3,141 Tai-chi videos were downloaded from YouTube.
-The videos were cropped and resized to a resolution of $256^2$, while preserving the aspect ratio. There are 3,016 training videos and 125 test videos.
+The Tai-chi-HD dataset, which includes brief videos of people doing Tai-chi
+exercises, was used for training and evaluation. Following
+\cite{siarohin2020order}, 3,141 Tai-chi videos were downloaded from YouTube.
+The videos were cropped and resized to a resolution of $256^2$, while the
+aspect ratio was preserved. There are 3,016 training videos and 125
+evaluation videos.
 
 \begin{table}[t]
 \caption{Images comparison}
