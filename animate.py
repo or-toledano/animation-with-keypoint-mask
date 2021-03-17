@@ -70,7 +70,7 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
             driving_video = x['driving_video']
             source_frame = x['source_video'][:, :, 0, :, :]
 
-            kp_source_pts = kp_detector(source_frame)
+            kp_source = kp_detector(source_frame)
             kp_driving_initial = kp_detector(driving_video[:, :, 0])
 
             for frame_idx in range(driving_video.shape[2]):
@@ -78,7 +78,6 @@ def animate(config, generator, kp_detector, checkpoint, log_dir, dataset, kp_aft
                 kp_driving = kp_detector(driving_frame)
 
                 if kp_after_softmax:
-                    kp_source = kp_source_pts
                     kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
                                            kp_driving_initial=kp_driving_initial,
                                            **animate_params['normalization_params'])
