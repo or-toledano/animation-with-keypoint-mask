@@ -75,7 +75,9 @@ And, as the figure shows, the source and the target are of different races, have
 In this study, we propose a simple, however surprisingly efficient approach to video retargeting – the transfer of the movement automatically from driving video sequence trough an source image for a new artificial video. Two inputs – image of the target person whose appearance we want to summarize and the other one of the source theme, the motion of which we want to impose on our target person – allow us to transfer movement between them by learning a compact motion representation.
 With our framework, we create a variety of videos that never even happen.
 
-A lot of researches observe that the key-point-based pose maintains motion signatures over time, while abstracting all possible subject identities as much as possible. We therefore use the key-point-based pattern in more "soft" way. We balanced the key points in such a way that delicate movements could be restored with great precision. 
+A lot of researches observe that the keypoint-based pose maintains motion
+signatures over time, while abstracting all possible subject identities as
+much as possible. We therefore use the keypoint-based pattern in more "soft" way. We balanced the key points in such a way that delicate movements could be restored with great precision.
 
 The main challenges we need to deal with, as they defined in that survey are: paired training, identity leakage, occlusions and temporal coherence,
 
@@ -102,9 +104,9 @@ Motion transfer has gained a lot of coverage over the last twenty years. Early a
 
 A number of techniques are based on calibrated multi camera systems to scan a target player and use an adapted 3D model of the target to control their motion in a new frame\cite{cheung2004markerless}. Our solution instead examines the transition of movement between 2D video subjects and prevents data calibration or 3D space boost.
 
-Deep learning for reanimation has been used in many implementations in recent works and relies on more accurate input representations. Due to the synthetic rendering, an interior model and a gaze map as an input. They manage to transfer head position and facial expressions among human subjects and to produce detailed portrait videos of their facial gestures\cite{kim2018deep}. Our problem is similar to that, except that our is full body movement  redirected and the inputs to our model are 2D video and an image. No external data replication is used. 
+Deep learning for reanimation has been used in many implementations in recent works and relies on more accurate input representations. Due to the synthetic rendering, an interior model and a gaze map as an input. They manage to transfer head position and facial expressions among human subjects and to produce detailed portrait videos of their facial gestures\cite{kim2018deep}. Our problem is similar to that, except that our is full body movement  redirected and the inputs to our model are 2D video and an image. No external data replication is used.
 
-Latest approaches concentrate on the disentangling of appearance and activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}. Similarly, we apply 
+Latest approaches concentrate on the disentangling of appearance and activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}. Similarly, we apply
 our representation of motion to different target subjects to
 generate new motions. However, in contrast to these  general methods we specialize on synthesizing detailed martial art videos.
 
