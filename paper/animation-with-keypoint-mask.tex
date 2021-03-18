@@ -61,12 +61,12 @@
 \includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_4.png} &
 \includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_5.png} &
 \includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_6.png}\\
-\includegraphics[width=1cm, height=1cm]{images/intro_image/Recon_1.png} &
-\includegraphics[width=1cm, height=1cm]{images/intro_image/Recon_2.png} &
-\includegraphics[width=1cm, height=1cm]{images/intro_image/Recon_3.png} &
-\includegraphics[width=1cm, height=1cm]{images/intro_image/Recon_4.png} &
-\includegraphics[width=1cm, height=1cm]{images/intro_image/Recon_5.png} &
-\includegraphics[width=1cm, height=1cm]{images/intro_image/Recon_6.png}\\
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_1.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_2.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_3.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_4.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_5.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_6.png}\\
 \bottomrule
 \end{tabular}
 \end{sc}
@@ -157,7 +157,7 @@ and an image. No external data replication is used.
 
 Latest approaches concentrate on the disentangling of appearance and
 activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}.
-Similarly, we apply our representation of motion to different target 
+Similarly, we apply our representation of motion to different target
 subjects to generate new motions. However, In contrast to these works, we did not use GAN but encoder-decoder approach.
 
 In comparison to the pixel-based approaches for image animation that were common until recently,
@@ -401,6 +401,42 @@ Ours & \includegraphics[width=1cm, height=1cm]{images/5_Ours_1} &
 \vskip -0.1in
 \end{table}
 
+
+\begin{table}[t]
+\caption{Images comparison 2}
+\label{table:images 2}
+\vskip 0.15in
+\begin{center}
+\begin{small}
+\begin{sc}
+\begin{tabular}{m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}}
+\toprule
+Source image & Driving\\
+\toprule
+\includegraphics[width=1cm, height=1cm]{images/intro_image/source.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_1.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_2.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_4.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_5.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/Driving_6.png} \\
+\midrule
+FOMM & \includegraphics[width=1cm, height=1cm]{images/intro_image/animate_1_fomm.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_2_fomm.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_4_fomm.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_5_fomm.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_6_fomm.png} \\
+Ours & \includegraphics[width=1cm, height=1cm]{images/intro_image/animate_1.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_2.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_4.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_5.png} &
+\includegraphics[width=1cm, height=1cm]{images/intro_image/animate_6.png} \\
+\bottomrule
+\end{tabular}
+\end{sc}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
 
 \subsection{Comparison with Previous Works}
 In order to compare our work to previous works (Table~\ref{table:results})
