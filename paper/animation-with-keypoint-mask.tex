@@ -339,7 +339,8 @@ reconstruction loss is written as: $L_{rec}(\hat{D}, D) =
 channel feature extracted from a specific VGG-19 layer \cite{simonyan2015deep}
 and $I$ is the number of feature channels in this layer. Additionally we use this lose on
 a number of resolutions, forming a pyramid obtained by down-sampling
-$\hat{D}$ and $D$, similarly to \cite{}, \cite{}. The resolutions are $256
+$\hat{D}$ and $D$, similarly to MS-SSIM \cite{1292216}, \cite{tang2019dual}.
+The resolutions are $256
 \times 256$, $128 \times 128$, $64 \times 64$ and $32 \times 32$.
 
 
@@ -355,59 +356,6 @@ evaluation videos.
 \begin{table}[t]
 \caption{Images comparison}
 \label{table:images}
-\vskip 0.15in
-\begin{center}
-\begin{small}
-\begin{sc}
-\begin{tabular}{m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}m{1.0cm}}
-\toprule
-Source image & Driving\\
-\toprule
-\includegraphics[width=1cm, height=1cm]{images/source} &
-\includegraphics[width=1cm, height=1cm]{images/driving_1} &
-\includegraphics[width=1cm, height=1cm]{images/driving_2} &
-\includegraphics[width=1cm, height=1cm]{images/driving_3} &
-\includegraphics[width=1cm, height=1cm]{images/driving_4} &
-\includegraphics[width=1cm, height=1cm]{images/driving_5} \\
-\midrule
-X2Face & \includegraphics[width=1cm, height=1cm]{images/1_X2Face_1} &
-\includegraphics[width=1cm, height=1cm]{images/1_X2Face_2} &
-\includegraphics[width=1cm, height=1cm]{images/1_X2Face_3} &
-\includegraphics[width=1cm, height=1cm]{images/1_X2Face_4} &
-\includegraphics[width=1cm, height=1cm]{images/1_X2Face_5} \\
-Monkey-Net & \includegraphics[width=1cm, height=1cm]{images/2_Monkey-Net_1} &
-\includegraphics[width=1cm, height=1cm]{images/2_Monkey-Net_2} &
-\includegraphics[width=1cm, height=1cm]{images/2_Monkey-Net_3} &
-\includegraphics[width=1cm, height=1cm]{images/2_Monkey-Net_4} &
-\includegraphics[width=1cm, height=1cm]{images/2_Monkey-Net_5} \\
-FOMM & \includegraphics[width=1cm, height=1cm]{images/3_FOMM_1} &
-\includegraphics[width=1cm, height=1cm]{images/3_FOMM_2} &
-\includegraphics[width=1cm, height=1cm]{images/3_FOMM_3} &
-\includegraphics[width=1cm, height=1cm]{images/3_FOMM_4} &
-\includegraphics[width=1cm, height=1cm]{images/3_FOMM_5} \\
-Perturbed Mask & \includegraphics[width=1cm,
-height=1cm]{images/4_Perturbed_1} &
-\includegraphics[width=1cm, height=1cm]{images/4_Perturbed_2} &
-\includegraphics[width=1cm, height=1cm]{images/4_Perturbed_3} &
-\includegraphics[width=1cm, height=1cm]{images/4_Perturbed_4} &
-\includegraphics[width=1cm, height=1cm]{images/4_Perturbed_5} \\
-Ours & \includegraphics[width=1cm, height=1cm]{images/5_Ours_1} &
-\includegraphics[width=1cm, height=1cm]{images/5_Ours_2} &
-\includegraphics[width=1cm, height=1cm]{images/5_Ours_3} &
-\includegraphics[width=1cm, height=1cm]{images/5_Ours_4} &
-\includegraphics[width=1cm, height=1cm]{images/5_Ours_5} \\
-\bottomrule
-\end{tabular}
-\end{sc}
-\end{small}
-\end{center}
-\vskip -0.1in
-\end{table}
-
-
-\begin{table}[t]
-\caption{Images comparison 2}
-\label{table:images 2}
 \vskip 0.15in
 \begin{center}
 \begin{small}
@@ -454,16 +402,21 @@ Average Key-points Distance \cite{cao2017realtime} (AKD)
 measures the average key-points distance between the generated video and
 the source video. Average Euclidean Distance \cite{zheng2019joint} (AED)
 measures the average euclidean distance
- between the representations of the ground-truth and generated videos in
- some embedding space. In addition, we added the L1 distance as well.
- Our AED and AKD metrics were calculated using the following repository:
- \url{https://github.com/AliaksandrSiarohin/pose-evaluation}
+between the representations of the ground-truth and generated videos in
+some embedding space. In addition, we added the L1 distance as well.
+Our AED and AKD metrics were calculated using the following repository:
+\url{https://github.com/AliaksandrSiarohin/pose-evaluation}
 \\
 Note that those metrics aren't optimal since one can easily improve
 reconstruction by increasing the bottleneck, and we can see our
 artifacts in animation results (Table~\ref{table:images}).
-However, our pose did follow the driving video well, and to improve the
+However, our approach did follow the driving video well, and to improve the
 identity and background artifacts, we suggest some fixes in Section~\ref{future}.
+Due to the smaller bottleneck of the second (softmax) mask, the pose
+worsened, but the generalization for the background improved (which also
+has to do with the low but non zero grayscale values given to the
+background in the heatmap mask representation, which can be solved with
+thresholding - see Section~\ref{future}).
 
 % Note use of \abovespace and \belowspace to get reasonable spacing
 % above and below tabular lines.
@@ -501,10 +454,12 @@ state of the art. In addition, summing the heatmap channels might not be
 optimal, and there is certainly some space to try something deeper with the
 features extracted in the keypoint detector as an input, or feed all of the
 channels separately into the generator. We want to experiment with
-mask thresholds due to the distortions in the animation background.
+mask thresholds due to the distortions in the animation background,
+similarily to \cite{shalev2020image}.
 We may also increase the number of keypoints, but that would probably be
 more beneficent to the second type of mask, and would increase the
-required GPU memory proportionally. We also thought about coloring
+required GPU memory proportionally. We also suggest (in the second, circles
+only mask) coloring
 matching keypoints with the same color to help the module to learn a motion
 flow.
 
