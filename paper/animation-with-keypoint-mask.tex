@@ -47,7 +47,9 @@
 \printAffiliationsAndNotice{}
 
 \begin{table}[t]
-\caption{\textbf{Motion transfer example:} Given a YouTube clip of a Thai-Chi artist (top), and an image of another one, our method transfers the one’s performance onto the other (bottom).}
+\caption{\textbf{Motion transfer example:} Given a YouTube clip of a
+Thai-Chi artist (top), and an image of another one, our method
+transfers the one’s performance onto the other (bottom).}
 \label{table:intro}
 \vskip 0.15in
 \begin{center}
@@ -88,50 +90,49 @@ We chose to tackle the generic, unsupervised setting, where we need to apply
 animation to any arbitrary object, without any domain specific model for the
 structure of the input.
 In this work, we extract the structure from a keypoint heatmap, without an
-explicit motion representation. Then, the structures from the image and the video
-are extracted to warp the image according to the video, by a deep
+explicit motion representation. Then, the structures from the image and the
+video are extracted to warp the image according to the video, by a deep
 generator.
 \end{abstract}
 
 \section{Introduction}
 Take a look at Figure ~\ref{table:intro} for two video sequences. The input
-is a YouTube clip of a Thai-Chi artist (the source subject) performing a
+is a YouTube clip of a Thai-Chi artist (the driving subject) performing a
 series of complex motions in the top row. Our algorithm's output is shown in
 the bottom row. It refers to frames that appear to show a different person
-(the target subject) executing the same motions. The twist is that the
-target individual has never performed the same exact sequence of motions as
-the driver video. In reality, he was photographed another movement with no clear
-reference to the source's actions.
-And, as the figure shows, the source and the target are of different races,
-have different backgrounds, and dress differently.
+(the source subject) executing the same motions. The twist is that the
+source individual has never performed the same exact sequence of motions as
+the driver video. In reality, he was photographed doing another movement
+with no clear reference to the driving's actions.
+And, as the figure shows, the source and the driving are of different
+appearances, have different backgrounds, and are dressed differently.
 
 In this study, we propose a simple, however surprisingly efficient approach
-to video retargeting – the transfer of the movement automatically from
-driving video sequence trough an source image for a new artificial video.
-Two inputs – image of the target person whose appearance we want to
-summarize and the other one of the source theme, the motion of which we want
-to impose on our target person – allow us to transfer movement between them
-by learning a compact motion representation.
-With our framework, we create a variety of videos that never even happen.
+to the general motion transfer problem, which can be
+applied to any domain, similarly to \cite{siarohin2019animating}:
+Given a source image of a person with the wanted appearance,
+and a driving video with the wanted structure/geometry,
+we synthesize a video by applying a deep motion generator per-frame. We
+assist the generator by feeding it with compact structural representations
+of the source and each frame of the driving video. That way, we obtain the
+target of a video of the source appearance and the driving motion, given
+any domain.
 
-A lot of researches observe that the keypoint-based pose preserves motion
-signatures over time, while abstracting all possible subject identities as
-much as possible. We therefore use the keypoint-based pattern without motion
-priors. We took the keypoints and use them for animate images such a way
-that doesn't need any external information about the subject or any
-assumption and prior about what is happening in the scene.
+Researchers of some notable works (Section~\ref{related}) observe that
+keypoint-based pose preserves motion signatures over time, while
+abstracting subject identities. We therefore use the keypoint-based pattern
+without any other motion priors. We obtain the keypoints and use them to
+animate images in a way that doesn't need any external information about the
+subject or any assumption or prior about the scene.
 
-The main challenges we need to deal with, as they defined in  \cite{Mirsky_2021} are generalization, temporal coherence, and occlusions.
-
-Our paper focuses on this motion transfer problem: given a source image $S$
-and a driving video $D$, the goal is to synthesize a video with the identity
-of $S$, and the motion from $D$.
-
-Our contribution is twofold: first, we demonstrate that removing the motion prior will function and provide better accuracy outcomes, and second, we provide a compact representation with improved efficiency.
+Our contribution is twofold: first, we demonstrate that removing the motion
+prior will function and provide better accuracy outcomes, and second,
+we provide a compact representation with improved efficiency.
 
 \medskip
 
-\subsection{Related Work:}
+\section{Related Work:}
+\label{related}
 Motion transfer has gained a lot of coverage over the last twenty years.
 Early approaches based on manipulating existing video footage to generate
 new content. They searched for frames in which the body position
@@ -430,6 +431,12 @@ Ours & \includegraphics[width=1cm, height=1cm]{images/intro_image/animate_1.png}
 \includegraphics[width=1cm, height=1cm]{images/intro_image/animate_4.png} &
 \includegraphics[width=1cm, height=1cm]{images/intro_image/animate_5.png} &
 \includegraphics[width=1cm, height=1cm]{images/intro_image/animate_6.png} \\
+Ours (softmax)&
+\includegraphics[width=1cm, height=1cm]{images/softmax/01.png} &
+\includegraphics[width=1cm, height=1cm]{images/softmax/02.png} &
+\includegraphics[width=1cm, height=1cm]{images/softmax/04.png} &
+\includegraphics[width=1cm, height=1cm]{images/softmax/05.png} &
+\includegraphics[width=1cm, height=1cm]{images/softmax/06.png} \\
 \bottomrule
 \end{tabular}
 \end{sc}
