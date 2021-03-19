@@ -125,9 +125,12 @@ without any other motion priors. We obtain the keypoints and use them to
 animate images in a way that doesn't need any external information about the
 subject or any assumption or prior about the scene.
 
-Our contribution is twofold: first, we demonstrate that removing the motion
-prior will function and provide better accuracy outcomes, and second,
-we provide a compact representation with improved efficiency.
+Our contribution is twofold: first, we demonstrate that removing the
+explicit motion prior from works such as FOMM is feasible to the task of
+image animation, and creates a compact, faster to train and evaluate model;
+And second, we make progress to achieve a better structure during
+animation, although further work (Section~\ref{future}) is required to
+refine our model.
 
 \medskip
 
@@ -143,7 +146,7 @@ movements that were never seen before with the new identities.
 
 A number of techniques are based on calibrated multi camera systems to scan
 a target player and use an adapted 3D model of the target to control their
-motion in a new frame\cite{cheung2004markerless}. Our solution instead
+motion in a new frame \cite{cheung2004markerless}. Our solution instead
 examines the transition of movement between 2D video subjects and prevents
 data calibration or 3D space information.
 
@@ -160,8 +163,7 @@ Some notable works in
 this area are \cite{siarohin2020order},
 \cite{siarohin2019animating}, \cite{kim2019unsupervised},
 \cite{balakrishnan2018synthesizing}, \cite{ma2017pose},
-\cite{reed2017parallel}, \cite{chan2019everybody}.
-
+,\cite{chan2019everybody}.
 
 Our work does not depend on a strong
 motion prior directly, but rather on a
@@ -170,6 +172,7 @@ such as \cite{siarohin2020order}. The idea of using drawn keypoints as a
 geometry representation (structural mask) was already used in image-to-image
 translation works such as TransGaGa \cite{wu2019transgaga}, in addition to
 some of the video reanimation works mentioned earlier.
+
 
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
@@ -299,7 +302,9 @@ circles as in Figure~\ref{softmax-sum}.}
 Our architecture follows \cite{siarohin2020order} without the dense
 motion module, after changing its keypoint generation module to return our
 mask. After the mask is obtained, we follow the encoder decoder approach as
-\cite{shalev2020image}.
+\cite{shalev2020image}, which had success in similar tasks
+\cite{newell2016stacked}.
+
 Namely, the encoder of the low resolution generator consists of $\textit{conv}_{7
 \times 7}$, $\textit{batch\_norm}$, $\textit{relu}$, followed by six
 residual blocks of $\textit{batch\_norm}$, $\textit{relu}$,
