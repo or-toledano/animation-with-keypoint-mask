@@ -135,11 +135,11 @@ we provide a compact representation with improved efficiency.
 \label{related}
 Motion transfer has gained a lot of coverage over the last twenty years.
 Early approaches based on manipulating existing video footage to generate
-new content. They searched for frames in which the body position
-corresponded to the desired motion and use them to generate a new
-content\cite{bregler1997video}. Our approach is equally designed for videos,
+new content. These included searching for frames in which the body position
+corresponds to a desired motion and using them to generate a new
+content \cite{bregler1997video}. Our approach is equally designed for videos,
 but rather than manipulating existing images, we learn to synthesize new
-movements that never was done.
+movements that were never seen before with the new identities.
 
 A number of techniques are based on calibrated multi camera systems to scan
 a target player and use an adapted 3D model of the target to control their
@@ -147,45 +147,39 @@ motion in a new frame\cite{cheung2004markerless}. Our solution instead
 examines the transition of movement between 2D video subjects and prevents
 data calibration or 3D space information.
 
-Deep learning for reanimation has been used in many implementations in
-recent works and relies on more accurate input representations. Due to the
-synthetic rendering, an interior model and a gaze map as an input. They
-manage to transfer head position and facial expressions among human subjects
-and to produce detailed portrait videos of their facial
-gestures\cite{kim2018deep}. Our problem is similar to that, except that our
-is full body movement  redirected and the inputs to our model are 2D video
-and an image. No external data replication is used.
-
 Latest approaches concentrate on the disentangling of appearance and
 activity and synthesizing of new motion videos \cite{tulyakov2018mocogan}.
 Similarly, we apply our representation of motion to different target
-subjects to generate new motions. However, In contrast to these works, we did not use GAN but encoder-decoder approach.
+subjects to generate new motions. However, In contrast to these works,
+we did not use GAN but an encoder-decoder approach.
 
-In comparison to the pixel-based approaches for image animation that were common until recently,
-keypoint-based approaches are now thought to have the ability to achieve
-high performance in the field of video reanimation. Some notable works in
-this area are \cite{siarohin2020order}, \cite{wiles2018x2face},
+In comparison to the pixel-based approaches for image animation that were
+common until recently, keypoint-based approaches are now thought to have
+the ability to achieve high performance in the field of video reanimation.
+Some notable works in
+this area are \cite{siarohin2020order},
 \cite{siarohin2019animating}, \cite{kim2019unsupervised},
 \cite{balakrishnan2018synthesizing}, \cite{ma2017pose},
-\cite{reed2017parallel}, \cite{chan2019everybody}
+\cite{reed2017parallel}, \cite{chan2019everybody}.
 
-Like \cite{siarohin2020order}, during training, our keypoint predictor does not require any keypoint annotations. This will result in erratic results. One of the most important forces motivating the exploration of unsupervised keypoints is the equivariance loss. It forces the model to predict keypoints that are consistent with known geometric transformations.
 
-In contrast to \cite{siarohin2020order}, our work does not depend on a strong
+Our work does not depend on a strong
 motion prior directly, but rather on a
 structure mask derived from a keypoint detector of a motion-based model,
 such as \cite{siarohin2020order}. The idea of using drawn keypoints as a
 geometry representation (structural mask) was already used in image-to-image
-translation works such as TransGaGa \cite{wu2019transgaga}.
+translation works such as TransGaGa \cite{wu2019transgaga}, in addition to
+some of the video reanimation works mentioned earlier.
 
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
-by basing the mask off a motion related module, which saves us the hassle
+by basing the mask off a motion related keypoint module, which saves us the hassle
 of perturbing the input hoping to achieve an identity-less mask which might
 not even be optimal. That way, we
 can base more of the motion representation on the deep network, reduce our
-prior, and leave some space for our network to achieve better results.
-
+prior, and leave some space for our network to optimize more. We also
+purpose an heatmap mask, which differs from some of the drawn keypoint
+masks mentioned.
 
 \section{Methodology}
 The network can be divided into two parts: obtaining the mask, and generating
