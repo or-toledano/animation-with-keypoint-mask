@@ -196,15 +196,15 @@ our variations, and can be described as low resolution generation from the
 source image, source mask and driving mask; Followed by up-scaling of the
 low scale synthesized prediction by passing it with the source frame to a
 high resolution generator.
-We created two different versions for the mask generator: the first, an
-absolute motion transfer; the second,  a relative motion transfer. We chose
-to present the results for the first, absolute one, due to its performance.
-The performance drop for our second, relative version was expected because the
-mask contained less structural information.
-The first version is referred as a "keypoint heatmap," while the second is
-referred as a "circles mask" or "keypoints after softmax".
+We created two different versions for the mask generator: the first,
+heatmap based mask, which is limited to absolute motion transfer;
+the second, keypoint based mask, which enables a relative motion transfer.
+The performance drop for our second version was expected because
+its mask contained less structural information.
+The first version is referred as a "keypoint heatmap mask" while the second
+is referred as a "circles mask" or "keypoints after softmax" mask.
 
-\subsection{First mask version for absolute motion transfer, with warping}
+\subsection{First mask version for absolute motion transfer (with warping)}
 \label{heatmap-mask}
 Our main mask for the project is obtained from carefully observing the
 keypoint module from \cite{siarohin2020order}. U-Net based keypoint
@@ -360,6 +360,75 @@ The videos were cropped and resized to a resolution of $256^2$, while the
 aspect ratio was preserved. There are 3,016 training videos and 125
 evaluation videos.
 
+\subsection{Comparison with Previous Works}
+In order to compare our work to previous works (Table~\ref{table:results})
+we used metrics previously used in similar papers.
+Average Key-points Distance \cite{cao2017realtime} (AKD)
+measures the average key-points distance between the generated video and
+the source video. Average Euclidean Distance \cite{zheng2019joint} (AED)
+measures the average euclidean distance
+between the representations of the ground-truth and generated videos in
+some embedding space. In addition, we added the L1 distance as well.
+Our AED and AKD metrics were calculated using the following repository:
+\url{https://github.com/AliaksandrSiarohin/pose-evaluation}
+\\
+Note that those metrics aren't optimal since one can easily improve
+reconstruction by increasing the bottleneck, and we can see our
+artifacts in animation results (Table~\ref{table:images}).
+However, our approach did follow the structure of driving video well,
+and to improve the identity and background artifacts,
+we suggest some fixes in Section~\ref{future}.
+Due to the smaller bottleneck of the second (softmax) mask, the pose
+worsened, but the generalization for the background improved (which also
+has to do with the low but non zero grayscale values given to the
+background in the heatmap mask representation, which can be solved with
+thresholding - see Section~\ref{future}).
+
+
+% Note use of \abovespace and \belowspace to get reasonable spacing
+% above and below tabular lines.
+
+\begin{table}[t]
+\caption{Accuracy Metrics}
+\label{table:results}
+\vskip 0.15in
+\begin{center}
+\begin{small}
+\begin{sc}
+\begin{tabular}{lcccr}
+\toprule
+Method & AKD & AED & L1 \\
+\midrule
+X2Face    & 17.654 & 0.272 & 0.080 \\
+Monkey-Net    & 10.798 & 0.228 & 0.077 \\
+FOMM    & 6.872 & 0.167 & 0.063 \\
+Perturbed Mask & 4.239 & 0.147 & 0.047 \\
+Ours (circles mask) & 14.760& 0.245 & 0.077 \\
+Ours & 5.551 & 0.141 &  0.045\\
+\midrule
+Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
+\bottomrule
+\end{tabular}
+\end{sc}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
+
+
+\subsubsection{Qualitative comparison}
+When comparing our work visually to \cite{siarohin2020order}, we can argue
+that we obtained a better pose which is almost the same with the original.
+We can observe a closer synthesized leg in the second frame (to the
+original driving), and a better pose (specifically the hands) on the third and
+forth frames.
+However, the background generated is damaged, due to the lack of
+thresholding in our mask which means we will always have noise
+to the background generation.
+See Section~\ref{future} for future suggestions.
+We can also see that the softmax (circular keypoint mask) version worked
+fine, preserved the background, but with a worse pose, due to less
+information in this type of mask.
 \begin{table}[t]
 \caption{Images comparison}
 \label{table:images}
@@ -402,59 +471,7 @@ Ours (softmax)&
 \vskip -0.1in
 \end{table}
 
-\subsection{Comparison with Previous Works}
-In order to compare our work to previous works (Table~\ref{table:results})
-we used metrics previously used in similar papers.
-Average Key-points Distance \cite{cao2017realtime} (AKD)
-measures the average key-points distance between the generated video and
-the source video. Average Euclidean Distance \cite{zheng2019joint} (AED)
-measures the average euclidean distance
-between the representations of the ground-truth and generated videos in
-some embedding space. In addition, we added the L1 distance as well.
-Our AED and AKD metrics were calculated using the following repository:
-\url{https://github.com/AliaksandrSiarohin/pose-evaluation}
-\\
-Note that those metrics aren't optimal since one can easily improve
-reconstruction by increasing the bottleneck, and we can see our
-artifacts in animation results (Table~\ref{table:images}).
-However, our approach did follow the structure of driving video well,
-and to improve the identity and background artifacts,
-we suggest some fixes in Section~\ref{future}.
-Due to the smaller bottleneck of the second (softmax) mask, the pose
-worsened, but the generalization for the background improved (which also
-has to do with the low but non zero grayscale values given to the
-background in the heatmap mask representation, which can be solved with
-thresholding - see Section~\ref{future}).
 
-% Note use of \abovespace and \belowspace to get reasonable spacing
-% above and below tabular lines.
-
-\begin{table}[t]
-\caption{Accuracy Metrics}
-\label{table:results}
-\vskip 0.15in
-\begin{center}
-\begin{small}
-\begin{sc}
-\begin{tabular}{lcccr}
-\toprule
-Method & AKD & AED & L1 \\
-\midrule
-X2Face    & 17.654 & 0.272 & 0.080 \\
-Monkey-Net    & 10.798 & 0.228 & 0.077 \\
-FOMM    & 6.872 & 0.167 & 0.063 \\
-Perturbed Mask & 4.239 & 0.147 & 0.047 \\
-Ours (circles mask) & 14.760& 0.245 & 0.077 \\
-Ours & 5.551 & 0.141 &  0.045\\
-\midrule
-Improvement (FOMM)    & 19.2\% & 15.5\% & 28.5\% \\
-\bottomrule
-\end{tabular}
-\end{sc}
-\end{small}
-\end{center}
-\vskip -0.1in
-\end{table}
 \section{Future work}
 \label{future}
 We would like to test our module on more datasets, and compare them to the
