@@ -102,7 +102,7 @@ series of complex motions in the top row. Our algorithm's output is shown in
 the bottom row. It refers to frames that appear to show a different person
 (the source subject) executing the same motions. The twist is that the
 source individual has never performed the same exact sequence of motions as
-the driver video. In reality, he was photographed doing another movement
+the driver video. In reality, they were photographed doing another movement
 with no clear reference to the driving's actions.
 And, as the figure shows, the source and the driving are of different
 appearances, have different backgrounds, and are dressed differently.
@@ -116,7 +116,9 @@ we synthesize a video by applying a deep motion generator per-frame. We
 assist the generator by feeding it with compact structural representations
 of the source and each frame of the driving video. That way, we obtain the
 target of a video of the source appearance and the driving motion, given
-any domain.
+any domain. Keeping the generator as a frame processor keeps it simple,
+but there were other works \cite{villegas2017learning} which make
+a use of LSTM.
 
 Researchers of some notable works (Section~\ref{related}) observe that
 keypoint-based pose preserves motion signatures over time, while
@@ -196,7 +198,8 @@ absolute motion transfer; the second,  a relative motion transfer. We chose
 to present the results for the first, absolute one, due to its performance.
 The performance drop for our second, relative version was expected because the
 mask contained less structural information.
-The first version is referred as a "keypoint heatmap," while the second is referred as a "circles mask" or "keypoints after softmax".
+The first version is referred as a "keypoint heatmap," while the second is
+referred as a "circles mask" or "keypoints after softmax".
 
 \subsection{First mask version for absolute motion transfer, with warping}
 Our main mask for the project is obtained from carefully observing the
@@ -254,7 +257,7 @@ displacement, our deep network can only attempt to approximate a zero order
 approximation, we can anticipate results that are more close to
 \cite{siarohin2019animating}.
 
-By taking the softmax over the heatmap, we get Table~\ref{softmax-10kp}.
+By taking the softmax over the heatmap, we get Figure~\ref{softmax-10kp}.
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
@@ -268,7 +271,7 @@ $K$ channels of the keypoint detector network used in
 \vskip -0.2in
 \end{figure}
 
-Summing over the channels, we get Table~\ref{softmax-sum}.
+Summing over the channels, we get Figure~\ref{softmax-sum}.
 
 \begin{figure}[ht]
 \vskip 0.2in
