@@ -1,6 +1,3 @@
-
-https://user-images.githubusercontent.com/49984106/111497559-df152780-8749-11eb-9527-f582bdf3c902.mp4
-
 # animation-with-keypoint-mask
 The right most square is the final result. Softmax mask (circles):\
 <img src="examples/softmax003/first.gif" width="512">
