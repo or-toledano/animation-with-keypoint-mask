@@ -116,9 +116,9 @@ we synthesize a video by applying a deep motion generator per-frame. We
 assist the generator by feeding it with compact structural representations
 of the source and each frame of the driving video. That way, we obtain the
 target of a video of the source appearance and the driving motion, given
-any domain. Keeping the generator as a frame processor keeps it simple,
-but there were other works \cite{villegas2017learning} which make
-a use of LSTM.
+any domain. Keeping the generator as a frame processor enables it to be
+simple and fast to train and evaluate, but note that there are works
+\cite{villegas2017learning} which make a use of LSTM.
 
 Researchers of some notable works (Section~\ref{related}) observe that
 keypoint-based pose preserves motion signatures over time, while
@@ -158,14 +158,14 @@ Similarly, we apply our representation of motion to different target
 subjects to generate new motions. However, In contrast to these works,
 we did not use GAN but an encoder-decoder approach.
 
-In comparison to the pixel-based approaches for image animation that were
+In comparison image animation approaches that were
 common until recently, keypoint-based approaches are now thought to have
 the ability to achieve high performance in the field of video reanimation.
 Some notable works in
 this area are \cite{siarohin2020order},
 \cite{siarohin2019animating}, \cite{kim2019unsupervised},
-\cite{balakrishnan2018synthesizing}, \cite{ma2017pose},
-,\cite{chan2019everybody}.
+\cite{balakrishnan2018synthesizing}, \cite{ma2017pose}
+\cite{chan2019everybody}.
 
 Our work does not depend on a strong
 motion prior directly, but rather on a
@@ -178,13 +178,16 @@ some of the video reanimation works mentioned earlier.
 
 The concept of using a structural mask in the context of image animation is
 demonstrated in \cite{shalev2020image}. However, the current work differs
-by basing the mask off a motion related keypoint module, which saves us the hassle
-of perturbing the input hoping to achieve an identity-less mask which might
-not even be optimal. That way, we
-can base more of the motion representation on the deep network, reduce our
-prior, and leave some space for our network to optimize more. We also
-purpose an heatmap mask, which differs from some of the drawn keypoint
-masks mentioned.
+by basing the mask off a motion related keypoint module.
+By doing so, we create a bottleneck for the network which is dependent on
+the keypoint bottleneck used when training the keypoint module, in order to
+achieve generalization. In addition, it simplifies the network, makes it
+modular to the mask, and saves us the hassle of perturbing the input
+hoping to achieve an identity-less mask.
+
+We purpose an heatmap mask (Section~\ref{heatmap-mask}),
+which differs from the drawn keypoint masks mentioned in previous works, in
+addition to a classical keypoint mask (Section~\ref{circles-mask}).
 
 \section{Methodology}
 The network can be divided into two parts: obtaining the mask, and generating
@@ -202,6 +205,7 @@ The first version is referred as a "keypoint heatmap," while the second is
 referred as a "circles mask" or "keypoints after softmax".
 
 \subsection{First mask version for absolute motion transfer, with warping}
+\label{heatmap-mask}
 Our main mask for the project is obtained from carefully observing the
 keypoint module from \cite{siarohin2020order}. U-Net based keypoint
 modules of this form, work by extracting features, which pass through a
@@ -241,6 +245,7 @@ generator.
 which is our output mask, aka the heatmap, pre softmax mask.
 
 \subsection{Second mask version for relative motion transfer}
+\label{circles-mask}
 We purposes an additional "circles" only mask
 which can be used in the context
 of relative motion transfer during animation, as in
@@ -248,7 +253,9 @@ of relative motion transfer during animation, as in
 The mask captures the image's geometry representation \cite{wu2019transgaga},
 and by requiring it to be represented as keypoints with a center, we can use
 the relative coordinates for the animation. This module, though, did not do
-as well as our heatmap mask module (Table~\ref{table:results}).
+as well as our heatmap mask module in the video reconstruction task
+(Table~\ref{table:results}), but did generalize fine due to to the narrow
+mask bottleneck (Table~\ref{table:images}).
 
 While relative motion transition is not always desired, this work shows that
 a keypoint-only-prior-based module is feasible for the task.
@@ -410,8 +417,9 @@ Our AED and AKD metrics were calculated using the following repository:
 Note that those metrics aren't optimal since one can easily improve
 reconstruction by increasing the bottleneck, and we can see our
 artifacts in animation results (Table~\ref{table:images}).
-However, our approach did follow the driving video well, and to improve the
-identity and background artifacts, we suggest some fixes in Section~\ref{future}.
+However, our approach did follow the structure of driving video well,
+and to improve the identity and background artifacts,
+we suggest some fixes in Section~\ref{future}.
 Due to the smaller bottleneck of the second (softmax) mask, the pose
 worsened, but the generalization for the background improved (which also
 has to do with the low but non zero grayscale values given to the
