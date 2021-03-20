@@ -10,16 +10,18 @@ Heatmap mask:\
 
 ```conda env create -f environment.yml```\
 ```conda activate venv11```\
+We use pytorch 1.7.1 with python 3.8.\
 Please obtain pretrained keypoint module. You can do so by\
-```git checkout fomm```\
-Then, follow the instructions from the README of that branch.
+```git checkout fomm-new-torch```\
+Then, follow the instructions from the README of that branch, or obtain a pre-trained checkpoint from\
+https://github.com/AliaksandrSiarohin/first-order-model
 ### training
 
 to train a model on specific dataset run:
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python run.py --config config/dataset_name.yaml --device_ids 0,1,2,3 --checkpoint_with_kp path/to/checkpoint/with/pretrained/kp
 ```
-E.g. `taichi-256-q.yaml` for the keypoint mask based model, and `taichi-256-softmax-q.yaml` for drawn keypoints instead
+E.g. `taichi-256-q.yaml` for the keypoint heatmap mask model, and `taichi-256-softmax-q.yaml` for drawn circular keypoints instead.
 
 the code will create a folder in the log directory (each run will create a time-stamped new directory).
 checkpoints will be saved to this folder.
@@ -66,4 +68,4 @@ we recommend the later, for each video make a separate folder with all the frame
 #### additional notes
 
 citation:
-
+???
