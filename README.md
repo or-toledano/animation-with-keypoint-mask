@@ -2,10 +2,14 @@
 The right most square is the final result. Softmax mask (circles):\
 <img src="examples/softmax003/first.gif" width="512">
 <img src="examples/softmax003/second.gif" width="512">\
-Heatmap mask:\
-<img src="examples/heatmap/first.gif" width="512">
-<img src="examples/heatmap/second.gif" width="512">
+<img src="examples/softmax003/third.gif" width="512">\
+<img src="examples/softmax003/forth.gif" width="512">\
 
+Heatmap mask:\
+<img src="examples/heatmap/first.gif" width="512">\
+<img src="examples/heatmap/second.gif" width="512">\
+<img src="examples/heatmap/third.gif" width="512">\
+<img src="examples/heatmap/forth.gif" width="512">\
 
 
 ```conda env create -f environment.yml```\
