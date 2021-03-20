@@ -45,7 +45,6 @@
 \vskip 0.3in
 ]
 \printAffiliationsAndNotice{}
-
 \begin{table}[t]
 \caption{\textbf{Motion transfer example:} Given a YouTube clip of a
 Thai-Chi artist (top), and an image of another one, our method
@@ -252,10 +251,13 @@ of relative motion transfer during animation, as in
 \cite{siarohin2020order}, which isn't possible with the previous heatmap mask.
 The mask captures the image's geometry representation \cite{wu2019transgaga},
 and by requiring it to be represented as keypoints with a center, we can use
-the relative coordinates for the animation. This module, though, did not do
-as well as our heatmap mask module in the video reconstruction task
-(Table~\ref{table:results}), but did generalize fine due to to the narrow
-mask bottleneck (Table~\ref{table:images}).
+the relative coordinates for the animation. This is done by replacing the
+driving keypoints with the source keypoints moved according to the driving
+displacement from the first frame, during animation. This module, though,
+did not do as well as our heatmap mask module in the video reconstruction
+task (Table~\ref{table:results}), but did generalize and managed to
+preserve the background during animation, due to to the
+small mask (Table~\ref{table:images}).
 
 While relative motion transition is not always desired, this work shows that
 a keypoint-only-prior-based module is feasible for the task.
