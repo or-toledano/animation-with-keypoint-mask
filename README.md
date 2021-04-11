@@ -74,6 +74,7 @@ we recommend the later, for each video make a separate folder with all the frame
 #### additional notes
 
 citation:
+```
 @misc{toledano2021,
   author = {Or Toledano and Yanir Marmor and Dov Gertz},
   title = {Image Animation with Keypoint Mask},
@@ -81,6 +82,6 @@ citation:
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/or-toledano/animation-with-keypoint-mask}},
-  commit = {}
+  commit = {015b1f2d466658141c41ea67d7356790b5cded40}
 }
-
+```
