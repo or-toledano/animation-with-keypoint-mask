@@ -1,5 +1,5 @@
 # animation-with-keypoint-mask
-[Paper](animation-with-keypoint-mask.pdf)\
+[Paper](animation-with-keypoint-mask.pdf)
 
 The right most square is the final result. Softmax mask (circles):\
 <img src="examples/softmax003/first.gif" width="512">
