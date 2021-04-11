@@ -1,4 +1,6 @@
 # animation-with-keypoint-mask
+[Paper](animation-with-keypoint-mask.pdf)\
+
 The right most square is the final result. Softmax mask (circles):\
 <img src="examples/softmax003/first.gif" width="512">
 <img src="examples/softmax003/second.gif" width="512">\
@@ -72,4 +74,13 @@ we recommend the later, for each video make a separate folder with all the frame
 #### additional notes
 
 citation:
-???
+@misc{toledano2021,
+  author = {Or Toledano and Yanir Marmor and Dov Gertz},
+  title = {Image Animation with Keypoint Mask},
+  year = {2021},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/or-toledano/animation-with-keypoint-mask}},
+  commit = {}
+}
+
