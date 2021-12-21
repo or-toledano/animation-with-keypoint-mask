@@ -79,6 +79,18 @@ citation:
   author = {Or Toledano and Yanir Marmor and Dov Gertz},
   title = {Image Animation with Keypoint Mask},
   year = {2021},
+  eprint={2112.10457},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV}
+}
+```
+
+Old format (before paper):
+```
+@misc{toledano2021,
+  author = {Or Toledano and Yanir Marmor and Dov Gertz},
+  title = {Image Animation with Keypoint Mask},
+  year = {2021},
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/or-toledano/animation-with-keypoint-mask}},
